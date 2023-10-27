@@ -33,6 +33,6 @@ Firstly the correct serial path needs to be located by running one of the follow
 - Mac: This is normally /dev/cu.usbserial-* (replace * with something)
 
 After finding the correct path rung
- - **make**
+- make
 followed by
-- **make install TTYDEV=/dev/your_serial_path ** 
+- make install TTYDEV=/dev/your_serial_path
