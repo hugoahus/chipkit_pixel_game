@@ -34,5 +34,4 @@ Firstly the correct serial path needs to be located by running one of the follow
 
 After finding the correct path rung
 - make
-followed by
 - make install TTYDEV=/dev/your_serial_path
