@@ -1,6 +1,6 @@
 # T-Rex Game using the built-in display (advanced project)
 
-By Erik Smit (020924-2437) and Hugo Larsson Wilhelmsson (020921-1234).
+By Erik Smit and Hugo Larsson Wilhelmsson.
 
 ## Objective and Requirements
 
