@@ -56,6 +56,5 @@ int main(void)
 
     while (1)
     {
-        display_start();
-    }
+        }
 }
