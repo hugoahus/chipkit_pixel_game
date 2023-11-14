@@ -51,11 +51,8 @@ int main(void)
 
     // initaite the display
     display_init();
-
-    // main game loop
-
-    while (1)
-    {
-        display_clear();
-    }
+    char c[] = "NO MORE DOGE!"; // test string for display
+    display_clear();
+    display_string(2, c);
+    display_update();
 }

@@ -4,9 +4,11 @@
 
    For copyright and licensing, see file COPYING */
 
-#include <stdint.h>  /* Declarations of uint_32 and the like */
-#include <pic32mx.h> /* Declarations of system-specific addresses etc */
-#include "t_rex.h"   /* Declatations for these labs */
+#include <stdint.h>
+#include <pic32mx.h>
+#include "t_rex.h" //Project header file
+
+/* (TAKEN FROM LAB)*/
 
 #define DISPLAY_CHANGE_TO_COMMAND_MODE (PORTFCLR = 0x10)
 #define DISPLAY_CHANGE_TO_DATA_MODE (PORTFSET = 0x10)
@@ -20,14 +22,11 @@
 #define DISPLAY_TURN_OFF_VDD (PORTFSET = 0x40)
 #define DISPLAY_TURN_OFF_VBAT (PORTFSET = 0x20)
 
+/*If any point in the array is set to one the pixel att the same position be lit*/
 uint8_t display[32][128];  // Human readable pixel position and activation
 uint8_t oled_display[512]; // Computer readable pixel position and activation
 
 /*(TAKEN FROM LAB) Quick sleep timer*/
-/* quicksleep:
-   A simple function to create a small delay.
-   Very inefficient use of computing resources,
-   but very handy in some special cases. */
 void quicksleep(int cyc)
 {
     int i;
@@ -35,25 +34,9 @@ void quicksleep(int cyc)
         ;
 }
 
-/* display_debug
-   A function to help debugging.
-
-   After calling display_debug,
-   the two middle lines of the display show
-   an address and its current contents.
-
-   There's one parameter: the address to read and display.
-
-   Note: When you use this function, you should comment out any
-   repeated calls to display_image; display_image overwrites
-   about half of the digits shown by display_debug.
-*/
-void display_debug(volatile int *const addr)
-{
-}
-
+/*(TAKEN FROM LAB) Send data to the OLED display*/
 uint8_t spi_send_recv(uint8_t data)
-{
+{ // LAB
     while (!(SPI2STAT & 0x08))
         ;
     SPI2BUF = data;
@@ -62,25 +45,7 @@ uint8_t spi_send_recv(uint8_t data)
     return SPI2BUF;
 }
 
-void display_clear()
-{
-    int row, column, i;
-
-    for (row = 0; row < 32; row++)
-    {
-        for (column = 0; column < 128; column++)
-        {
-            display[row][column] = 0;
-        }
-    }
-
-    for (i = 0; i < 512; i++)
-    {
-        oled_display[i] = 0;
-    }
-}
-
-// Initialisation code for displat, taken from lab
+/*(TAKEN FROM LAB) Initialize OLED display*/
 void display_init(void)
 {
     DISPLAY_CHANGE_TO_COMMAND_MODE;
@@ -112,10 +77,73 @@ void display_init(void)
     spi_send_recv(0xAF);
 }
 
+/*(TAKEN FROM LAB) Display text*/
 void display_string(int line, char *s)
 {
+    int i;
+    if (line < 0 || line >= 4)
+        return;
+    if (!s)
+        return;
+    for (i = 0; i < 16; i++)
+        if (*s)
+        {
+            textbuffer[line][i] = *s;
+            s++;
+        }
+        else
+            textbuffer[line][i] = ' ';
 }
 
+/*(TAKEN FROM LAB) Display text*/
 void display_update(void)
+{ // LAB
+    int i, j, k;
+    int c;
+    for (i = 0; i < 4; i++)
+    {
+        DISPLAY_CHANGE_TO_COMMAND_MODE;
+        spi_send_recv(0x22);
+        spi_send_recv(i);
+
+        spi_send_recv(0x0);
+        spi_send_recv(0x10);
+
+        DISPLAY_CHANGE_TO_DATA_MODE;
+
+        for (j = 0; j < 16; j++)
+        {
+            c = textbuffer[i][j];
+            if (c & 0x80)
+                continue;
+
+            for (k = 0; k < 8; k++)
+                spi_send_recv(font[c * 8 + k]);
+        }
+    }
+}
+
+/*This function sets all the values in the display array and oled display array into 0s*/
+void display_clear()
 {
+    int row, column, i;
+
+    for (row = 0; row < 32; row++)
+    {
+        for (column = 0; column < 128; column++)
+        {
+            display[row][column] = 0;
+        }
+    }
+
+    for (i = 0; i < 512; i++)
+    {
+        oled_display[i] = 0;
+    }
+}
+
+/*This function calls all the necessary functions for the game to start*/
+void display_start()
+{
+    display_clear(); // This clear the screen everytime it loops. It will clear the last frame
 }
