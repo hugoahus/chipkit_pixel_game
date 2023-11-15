@@ -34,7 +34,7 @@ void quicksleep(int cyc)
         ;
 }
 
-/*(TAKEN FROM LAB) Send data to the OLED display*/
+/*(TAKEN FROM LAB) Send data to the OLED display using the SPI protocol*/
 uint8_t spi_send_recv(uint8_t data)
 { // LAB
     while (!(SPI2STAT & 0x08))
@@ -48,6 +48,7 @@ uint8_t spi_send_recv(uint8_t data)
 /*(TAKEN FROM LAB) Initialize OLED display*/
 void display_init(void)
 {
+    // Given sequence for initialising display
     DISPLAY_CHANGE_TO_COMMAND_MODE;
     quicksleep(10);
     DISPLAY_ACTIVATE_VDD;
@@ -77,6 +78,33 @@ void display_init(void)
     spi_send_recv(0xAF);
 }
 
+/*(TAKEN FROM LAB) This will print any image on the display with the help of an array containing the map of the active and inactive pixels*/
+void display_image(int x, const uint8_t *data)
+{ // LAB
+    int i, j;
+
+    for (i = 0; i < 4; i++)
+    {
+        DISPLAY_CHANGE_TO_COMMAND_MODE;
+
+        spi_send_recv(0x22);
+        spi_send_recv(i);
+
+        spi_send_recv(x & 0xF);
+        spi_send_recv(0x10 | ((x >> 4) & 0xF));
+
+        DISPLAY_CHANGE_TO_DATA_MODE;
+
+        for (j = 0; j < 128; j++)
+            spi_send_recv(data[i * 128 + j]);
+    }
+}
+/* This function translates the human readable pixel locations to a 512-byte buffer*/
+void display_translate()
+{
+    int page, row, column, 
+}
+
 /*(TAKEN FROM LAB) Display text*/
 void display_string(int line, char *s)
 {
@@ -97,7 +125,7 @@ void display_string(int line, char *s)
 
 /*(TAKEN FROM LAB) Display text*/
 void display_update(void)
-{ // LAB
+{
     int i, j, k;
     int c;
     for (i = 0; i < 4; i++)
@@ -145,5 +173,5 @@ void display_clear()
 /*This function calls all the necessary functions for the game to start*/
 void display_start()
 {
-    display_clear(); // This clear the screen everytime it loops. It will clear the last frame
+    
 }

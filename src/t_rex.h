@@ -11,6 +11,8 @@ uint8_t spi_send_recv(uint8_t data);
 void quicksleep(int cyc);
 
 extern const uint8_t const font[128 * 8];
+/* Declare bitmap array containing icon */
+extern const uint8_t const icon[128];
 extern char textbuffer[4][16];
 
 // Own
