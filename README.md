@@ -32,6 +32,6 @@ Firstly the correct serial path needs to be located by running one of the follow
 - Windows: In MSYS2, this is normally /dev/ttyS2
 - Mac: This is normally /dev/cu.usbserial-* (replace * with something)
 
-After finding the correct path rung
+After finding the correct path run
 - make
 - make install TTYDEV=/dev/your_serial_path
