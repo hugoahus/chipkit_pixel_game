@@ -52,5 +52,5 @@ int main(void)
     // Initaite the display
     display_init();
 
-    display_start();
+    display_change();
 }
