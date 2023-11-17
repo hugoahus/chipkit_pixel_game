@@ -102,7 +102,28 @@ void display_image(int x, const uint8_t *data)
 /* This function translates the human readable pixel locations to a 512-byte buffer*/
 void display_translate()
 {
-    int page, row, column, 
+    int page, row, column;
+    uint8_t powerOfTwo = 1;
+    uint8_t oledNumber = 0;
+
+    for (page = 0; page < 4; page++)
+    {
+        for (column = 0; column < 128; column++)
+        {
+            powerOfTwo = 1;
+            oledNumber = 0;
+
+            for (row = 0; row < 8; row++)
+            {
+                if (display[8 * page + row][column])
+                {
+                    oledNumber |= powerOfTwo;
+                }
+                powerOfTwo <<= 1;
+            }
+            oled_display[column + page * 128] = oledNumber;
+        }
+    }
 }
 
 /*(TAKEN FROM LAB) Display text*/
@@ -171,7 +192,13 @@ void display_clear()
 }
 
 /*This function calls all the necessary functions for the game to start*/
-void display_start()
+void display_change()
 {
-    
+    display_clear();
+
+    // Update states
+    display[31][150] = 1;
+
+    display_translate();
+    display_image(0, oled_display);
 }
