@@ -191,13 +191,6 @@ void display_clear()
     }
 }
 
-/*
-This function creates the trex character by checking the the x and y positions of the
-trex and then setting those pixels to one on the display
-*/
-void create_trex()
-{
-}
 
 /*This function calls all the necessary functions for the game to start*/
 void display_change()
