@@ -126,51 +126,51 @@ void display_translate()
     }
 }
 
-/*(TAKEN FROM LAB) Display text*/
-void display_string(int line, char *s)
-{
-    int i;
-    if (line < 0 || line >= 4)
-        return;
-    if (!s)
-        return;
-    for (i = 0; i < 16; i++)
-        if (*s)
-        {
-            textbuffer[line][i] = *s;
-            s++;
-        }
-        else
-            textbuffer[line][i] = ' ';
-}
+// /*(TAKEN FROM LAB) Display text*/
+// void display_string(int line, char *s)
+// {
+//     int i;
+//     if (line < 0 || line >= 4)
+//         return;
+//     if (!s)
+//         return;
+//     for (i = 0; i < 16; i++)
+//         if (*s)
+//         {
+//             textbuffer[line][i] = *s;
+//             s++;
+//         }
+//         else
+//             textbuffer[line][i] = ' ';
+// }
 
 /*(TAKEN FROM LAB) Display text*/
-void display_update(void)
-{
-    int i, j, k;
-    int c;
-    for (i = 0; i < 4; i++)
-    {
-        DISPLAY_CHANGE_TO_COMMAND_MODE;
-        spi_send_recv(0x22);
-        spi_send_recv(i);
+// void display_update(void)
+// {
+//     int i, j, k;
+//     int c;
+//     for (i = 0; i < 4; i++)
+//     {
+//         DISPLAY_CHANGE_TO_COMMAND_MODE;
+//         spi_send_recv(0x22);
+//         spi_send_recv(i);
 
-        spi_send_recv(0x0);
-        spi_send_recv(0x10);
+//         spi_send_recv(0x0);
+//         spi_send_recv(0x10);
 
-        DISPLAY_CHANGE_TO_DATA_MODE;
+//         DISPLAY_CHANGE_TO_DATA_MODE;
 
-        for (j = 0; j < 16; j++)
-        {
-            c = textbuffer[i][j];
-            if (c & 0x80)
-                continue;
+//         for (j = 0; j < 16; j++)
+//         {
+//             c = textbuffer[i][j];
+//             if (c & 0x80)
+//                 continue;
 
-            for (k = 0; k < 8; k++)
-                spi_send_recv(font[c * 8 + k]);
-        }
-    }
-}
+//             for (k = 0; k < 8; k++)
+//                 spi_send_recv(font[c * 8 + k]);
+//         }
+//     }
+// }
 
 /*This function sets all the values in the display array and oled display array into 0s*/
 void display_clear()
@@ -191,13 +191,21 @@ void display_clear()
     }
 }
 
+/*
+This function creates the trex character by checking the the x and y positions of the
+trex and then setting those pixels to one on the display
+*/
+void create_trex()
+{
+}
+
 /*This function calls all the necessary functions for the game to start*/
 void display_change()
 {
     display_clear();
 
-    // Update states
-    display[31][150] = 1;
+    // Display static object (ground, sun etc)
+    setup_spawn();
 
     display_translate();
     display_image(0, oled_display);
