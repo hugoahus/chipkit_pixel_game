@@ -32,8 +32,8 @@ mytime:	.word 0x5957
 timstr:	.ascii
 	
 delay:
-	li	$a2,888888    # a2 = ms = 10
-	li	$t0,4711111      # t0 = 4711
+	li	$a2,2000000   # a2 = ms = 10
+	li	$t0,4711      # t0 = 4711
 	loop: 	
 		blt	$a2, $0, finish 
 		nop
@@ -45,6 +45,8 @@ delay:
 			nop
 		j loop
 		nop
+
+
 finish:
 	jr 	$ra
 	nop

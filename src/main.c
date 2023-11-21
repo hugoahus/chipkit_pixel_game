@@ -52,7 +52,6 @@ int main(void)
     // Initaite the display
     display_init();
 
-    display_change();
-
     
+    game();
 }
