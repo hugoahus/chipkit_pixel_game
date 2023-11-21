@@ -126,7 +126,7 @@ void display_translate()
     }
 }
 
-// /*(TAKEN FROM LAB) Display text*/
+/*(TAKEN FROM LAB) Display text*/
 // void display_string(int line, char *s)
 // {
 //     int i;
@@ -191,15 +191,9 @@ void display_clear()
     }
 }
 
-
 /*This function calls all the necessary functions for the game to start*/
 void display_change()
 {
-    display_clear();
-
-    // Display static object (ground, sun etc)
-    setup_spawn();
-
     display_translate();
     display_image(0, oled_display);
 }
