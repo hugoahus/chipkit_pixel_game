@@ -4,10 +4,9 @@
 #include <pic32mx.h> /* Declarations of system-specific addresses etc */
 #include "t_rex.h"
 
-// Define a structure with two int arrays
-
-struct Dog player; // Global for testing
-
+Dog player;
+int jump_timer = 0;
+const int DOG_SPAWN_Y = GROUND_LEVEL - DOG_HEIGHT;
 /* Turns on the display pixels for the static ground (which is a line of pixels)*/
 void show_ground()
 {
@@ -44,50 +43,79 @@ void show_ground()
 //         box->box_y[i] = i + box->start_y;
 //     }
 // }
-void show_trex(int x, int y)
+
+/* Changes the players position  */
+void update_player()
+{
+    if (!player.is_grounded)
+    {
+
+        player.y += player.vel_y; // Decrement the y position
+        jump_timer++;
+
+        // Turning point
+        if (jump_timer == 6)
+        {
+            player.vel_y *= -1;
+        }
+        // Check if character has landed
+        if (player.y >= DOG_SPAWN_Y)
+        {
+            player.y = DOG_SPAWN_Y;
+            player.is_grounded = 1; // Set is_grounded to true
+            player.vel_y = 0;
+        }
+    }
+}
+void show_trex()
 {
     int i, j;
-    for (i = 0; i < T_REX_HEIGHT; i++)
+    for (i = 0; i < DOG_HEIGHT; i++)
     {
-        for (j = 0; j < T_REX_WIDTH; j++)
+        for (j = 0; j < DOG_WIDTH; j++)
         {
             if (trexPixels[i][j])
             {
-                display[i + y + player.vel][j + x] = 1;
+                display[i + player.y][j + player.x] = 1;
             }
         }
     }
 }
 void update()
 {
-    show_trex(20, (GROUND_LEVEL - T_REX_HEIGHT));
+    update_player();
+    show_trex();
     show_ground();
 }
 
 /* Function for spawning character and environment on game start*/
 void setup_spawn()
 {
+    player.is_grounded = 1; // Set on ground
     player.x = 30;
-    player.y = GROUND_LEVEL - 5;
-    player.vel = 0;
+    player.y = DOG_SPAWN_Y;
+    player.vel_y = 0;
 }
 
 void player_jump()
 {
-    player.vel = -10;
+    if (player.is_grounded == 1)
+    {
+        player.is_grounded = 0;
+        player.vel_y = JUMP_FORCE;
+    }
 }
 
 /* Main game function */
 void game()
 {
-    // setup_spawn();
-    player_jump(); // test
+    setup_spawn();
+    player_jump();
     while (1)
     {
         display_clear();
         update();
         display_change();
-        player.vel++;
-        delay(FRAME_RATE);
+        delay(FRAME_SPEED);
     }
 }

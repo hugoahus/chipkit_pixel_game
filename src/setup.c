@@ -11,7 +11,7 @@
 char textbuffer[4][16];
 
 // Define the T-Rex pixel data in a bit map
-const uint8_t const trexPixels[T_REX_HEIGHT][T_REX_WIDTH] = {
+const uint8_t const trexPixels[DOG_HEIGHT][DOG_WIDTH] = {
     {0, 0, 0, 0, 0, 0, 1, 1, 0},
     {1, 0, 0, 0, 0, 0, 1, 1, 1},
     {1, 1, 1, 1, 1, 1, 1, 1, 1},

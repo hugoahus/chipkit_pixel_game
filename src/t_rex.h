@@ -7,11 +7,16 @@
 #define COLUMNS 128     // Nr of columns
 #define ROWS 32         // Nr of rows
 #define BOX_SIZE 4      // Size of box, meaning 4X4
-#define FRAME_RATE 10
+#define FRAME_SPEED 100 // Frame rate in Milliseconds
 
-/* Trex constants*/
-#define T_REX_WIDTH 9
-#define T_REX_HEIGHT 6
+/* Dog constants*/
+#define DOG_WIDTH 9
+#define DOG_HEIGHT 6
+
+/* Physics constants*/
+#define GRAVITY 9.8f     // Acceleration due to gravity (m/s^2)
+#define JUMP_FORCE -1    // The initial force of the jump
+#define TIME_STEP 0.016f // Time step for the game loop, 60 FPS
 
 // Declare display related functions
 
@@ -25,7 +30,7 @@ void quicksleep(int cyc);
 void delay(int);
 
 extern const uint8_t const font[128 * 8];
-extern const uint8_t trexPixels[T_REX_HEIGHT][T_REX_WIDTH];
+extern const uint8_t trexPixels[DOG_HEIGHT][DOG_WIDTH];
 /* Declare bitmap array containing icon */
 extern const uint8_t const icon[128];
 extern char textbuffer[4][16];
@@ -52,13 +57,15 @@ struct Box
 };
 
 // Trex character
-struct Dog
+typedef struct
 {
-    int vel;
-    int x;
+    int vel_y;
     int y;
-    char dir;  // direction of the Trex
-    int state; // the state of the Trex
-};
+    int x;
+    int is_grounded; // Represents boolean
 
-#endif // STRUCTURES_H
+} Dog;
+
+Dog player;
+
+#endif
