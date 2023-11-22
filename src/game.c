@@ -5,8 +5,12 @@
 #include "t_rex.h"
 
 Dog player;
+Hydrant hydrant;
 int jump_timer = 0;
+
 const int DOG_SPAWN_Y = GROUND_LEVEL - DOG_HEIGHT;
+const int HYDRANT_SPAWN_Y = GROUND_LEVEL - FH_HEIGHT;
+
 /* Turns on the display pixels for the static ground (which is a line of pixels)*/
 void show_ground()
 {
@@ -67,32 +71,33 @@ void update_player()
         }
     }
 }
-void show_trex()
+
+void update_hydrant()
 {
-    int i, j;
-    for (i = 0; i < DOG_HEIGHT; i++)
-    {
-        for (j = 0; j < DOG_WIDTH; j++)
-        {
-            if (trexPixels[i][j])
-            {
-                display[i + player.y][j + player.x] = 1;
-            }
-        }
-    }
+    hydrant.y = HYDRANT_SPAWN_Y;
+    hydrant.x += hydrant.vel_x; // Move x-position
+}
+/* Test function for spawning a hydrant*/
+void spawn_hydrant()
+{
+    hydrant.x = 128 - FH_WIDTH;
+    hydrant.y = HYDRANT_SPAWN_Y;
+    hydrant.vel_x = -2; // Set test speed of 2 pixels
 }
 void update()
 {
     update_player();
-    show_trex();
+    update_hydrant();
+    display_figure(player.x, player.y, DOG_HEIGHT, DOG_WIDTH, trexPixels);
+    display_figure(hydrant.x, hydrant.y, FH_HEIGHT, FH_WIDTH, hydrantPixels);
     show_ground();
 }
 
 /* Function for spawning character and environment on game start*/
-void setup_spawn()
+void initialise()
 {
     player.is_grounded = 1; // Set on ground
-    player.x = 30;
+    player.x = 20;
     player.y = DOG_SPAWN_Y;
     player.vel_y = 0;
 }
@@ -109,8 +114,9 @@ void player_jump()
 /* Main game function */
 void game()
 {
-    setup_spawn();
+    initialise();
     player_jump();
+    spawn_hydrant();
     while (1)
     {
         display_clear();

@@ -9,41 +9,49 @@
 #define BOX_SIZE 4      // Size of box, meaning 4X4
 #define FRAME_SPEED 100 // Frame rate in Milliseconds
 
+// Object constants
+
 /* Dog constants*/
 #define DOG_WIDTH 9
 #define DOG_HEIGHT 6
+
+/* Fire hydrant constants*/
+#define FH_WIDTH 5
+#define FH_HEIGHT 6
 
 /* Physics constants*/
 #define GRAVITY 9.8f     // Acceleration due to gravity (m/s^2)
 #define JUMP_FORCE -1    // The initial force of the jump
 #define TIME_STEP 0.016f // Time step for the game loop, 60 FPS
 
-// Declare display related functions
-
-void display_image(int x, const uint8_t *data);
-void display_init(void);
-void display_string(int line, char *s);
-void display_update(void);
-uint8_t spi_send_recv(uint8_t data);
-
-void quicksleep(int cyc);
-void delay(int);
-
 extern const uint8_t const font[128 * 8];
 extern const uint8_t trexPixels[DOG_HEIGHT][DOG_WIDTH];
+extern const uint8_t hydrantPixels[FH_HEIGHT][FH_WIDTH];
 /* Declare bitmap array containing icon */
 extern const uint8_t const icon[128];
+
 extern char textbuffer[4][16];
 
 // Own
 uint8_t display[32][128];  // Human readable pixel position and activation
 uint8_t oled_display[512]; // Computer readable pixel position and activation
 
+// Declare display related functions
+
+void display_image(int x, const uint8_t *data);
+void display_init(void);
+// void display_string(int line, char *s);
+// void display_update(void);
+uint8_t spi_send_recv(uint8_t data);
+
+void quicksleep(int cyc);
+void delay(int);
+
 void display_change();
 void display_clear();
+void display_figure();
 
-void setup_spawn();
-void create_trex();
+void intialise();
 
 void game();
 
@@ -56,7 +64,7 @@ struct Box
     int box_y[BOX_SIZE];
 };
 
-// Trex character
+// Dog/Player character
 typedef struct
 {
     int vel_y;
@@ -68,4 +76,10 @@ typedef struct
 
 Dog player;
 
+typedef struct
+{
+    int vel_x;
+    int y;
+    int x;
+} Hydrant;
 #endif

@@ -77,6 +77,20 @@ void display_init(void)
 
     spi_send_recv(0xAF);
 }
+void display_figure(int x, int y, int height, int width, const uint8_t pixels[height][width])
+{
+    int i, j;
+    for (i = 0; i < height; i++)
+    {
+        for (j = 0; j < width; j++)
+        {
+            if (pixels[i][j])
+            {
+                display[i + y][j + x] = 1;
+            }
+        }
+    }
+}
 
 /*(TAKEN FROM LAB) This will print any image on the display with the help of an array containing the map of the active and inactive pixels*/
 void display_image(int x, const uint8_t *data)
