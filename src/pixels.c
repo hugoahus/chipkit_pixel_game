@@ -6,12 +6,12 @@
 
 #include <stdint.h>  /* Declarations of uint_32 and the like */
 #include <pic32mx.h> /* Declarations of system-specific addresses etc */
-#include "t_rex.h"
+#include "dog.h"
 
 char textbuffer[4][16];
 
 // Define the Dog pixel data in a bit map
-const uint8_t const trexPixels[DOG_HEIGHT][DOG_WIDTH] = {
+const uint8_t const dogPixels[DOG_HEIGHT][DOG_WIDTH] = {
     {0, 0, 0, 0, 0, 0, 1, 1, 0},
     {1, 0, 0, 0, 0, 0, 1, 1, 1},
     {1, 1, 1, 1, 1, 1, 1, 1, 1},

@@ -2,15 +2,16 @@
 
 #include <stdint.h>  /* Declarations of uint_32 and the like */
 #include <pic32mx.h> /* Declarations of system-specific addresses etc */
-#include "t_rex.h"
+#include "dog.h"
 
 Dog player;
 Hydrant hydrant;
 int jump_timer = 0; // Intitiate jump timer
 
+int game_state = 1; // 0 (Menu), 1(Game), 2(Highscore)
 const int DOG_SPAWN_Y = GROUND_LEVEL - DOG_HEIGHT;
 const int HYDRANT_SPAWN_Y = GROUND_LEVEL - FH_HEIGHT;
-const int JUMP_HEIGHT = 6;
+const int JUMP_HEIGHT = 6; // Jump vertical boundary
 
 /* Turns on the display pixels for the static ground (which is a line of pixels)*/
 void show_ground()
@@ -103,6 +104,7 @@ void player_jump()
         player.vel_y = JUMP_FORCE;
     }
 }
+/* This function check for button presses and handles it accordingly */
 void check_buttons()
 {
     int btn = getbtns();
@@ -113,26 +115,51 @@ void check_buttons()
         player_jump();
     }
 }
+
 void update()
 {
     check_buttons();
     update_player();
     update_hydrant();
-    display_figure(player.x, player.y, DOG_HEIGHT, DOG_WIDTH, trexPixels);
+    display_figure(player.x, player.y, DOG_HEIGHT, DOG_WIDTH, dogPixels);
     display_figure(hydrant.x, hydrant.y, FH_HEIGHT, FH_WIDTH, hydrantPixels);
     show_ground();
 }
 
+void menu()
+{
+}
+
+/* This function check for switch toggles and handles it accordingly */
+
+int check_switches()
+{
+    int sw = getsw();
+    if (sw == 0x1)
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
 /* Main game function */
-void game()
+void game_loop()
 {
     spawn_player();
     spawn_hydrant();
-    while (1)
+    while (game_state == 1)
     {
         display_clear();
         update();
         display_change();
         delay(FRAME_SPEED);
+
+        game_state = check_switches();
     }
+
+    // Test code for switching displays
+    display_clear();
+    display_image(0, oled_display);
 }

@@ -1,6 +1,6 @@
 #include <stdint.h>  /* Declarations of uint_32 and the like */
 #include <pic32mx.h> /* Declarations of system-specific addresses etc */
-#include "t_rex.h"
+#include "dog.h"
 
 int main(void)
 {
@@ -53,5 +53,5 @@ int main(void)
     display_init();
     controls_init();
 
-    game();
+    game_loop();
 }

@@ -20,12 +20,11 @@
 #define FH_HEIGHT 6
 
 /* Physics constants*/
-#define GRAVITY 9.8f     // Acceleration due to gravity (m/s^2)
-#define JUMP_FORCE -1    // The initial force of the jump
-#define TIME_STEP 0.016f // Time step for the game loop, 60 FPS
+#define GRAVITY 9.8f  // Acceleration due to gravity (m/s^2)
+#define JUMP_FORCE -2 // The initial force of the jump
 
 extern const uint8_t const font[128 * 8];
-extern const uint8_t trexPixels[DOG_HEIGHT][DOG_WIDTH];
+extern const uint8_t dogPixels[DOG_HEIGHT][DOG_WIDTH];
 extern const uint8_t hydrantPixels[FH_HEIGHT][FH_WIDTH];
 /* Declare bitmap array containing icon */
 extern const uint8_t const icon[128];
@@ -53,7 +52,8 @@ void display_figure();
 
 // Game related functions
 void spawn_player();
-void game();
+void game_loop();
+int check_switches();
 
 // Control related functions
 void controls_init();

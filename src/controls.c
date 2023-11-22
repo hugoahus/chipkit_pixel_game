@@ -1,6 +1,6 @@
 #include <stdint.h>  /* Declarations of uint_32 and the like */
 #include <pic32mx.h> /* Declarations of system-specific addresses etc */
-#include "t_rex.h"   /* Declatations for these labs */
+#include "dog.h"   /* Declatations for these labs */
 
 /* Interrupt Service Routine */
 void user_isr(void)

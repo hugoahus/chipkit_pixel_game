@@ -6,7 +6,7 @@
 
 #include <stdint.h>
 #include <pic32mx.h>
-#include "t_rex.h" //Project header file
+#include "dog.h" //Project header file
 
 /* (TAKEN FROM LAB)*/
 
@@ -76,6 +76,11 @@ void display_init(void)
     spi_send_recv(0x20);
 
     spi_send_recv(0xAF);
+
+    // Clear the display
+    display_clear();
+    // Update the display with cleared pixels
+    display_image(0, oled_display);
 }
 void display_figure(int x, int y, int height, int width, const uint8_t pixels[height][width])
 {
