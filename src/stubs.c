@@ -21,8 +21,3 @@ void _on_bootstrap()
 {
 }
 
-/* Interrupt Service Routine */
-void user_isr(void)
-{
-    return;
-}

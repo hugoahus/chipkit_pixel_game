@@ -6,10 +6,11 @@
 
 Dog player;
 Hydrant hydrant;
-int jump_timer = 0;
+int jump_timer = 0; // Intitiate jump timer
 
 const int DOG_SPAWN_Y = GROUND_LEVEL - DOG_HEIGHT;
 const int HYDRANT_SPAWN_Y = GROUND_LEVEL - FH_HEIGHT;
+const int JUMP_HEIGHT = 6;
 
 /* Turns on the display pixels for the static ground (which is a line of pixels)*/
 void show_ground()
@@ -58,7 +59,7 @@ void update_player()
         jump_timer++;
 
         // Turning point
-        if (jump_timer == 6)
+        if (jump_timer == JUMP_HEIGHT)
         {
             player.vel_y *= -1;
         }
@@ -68,6 +69,7 @@ void update_player()
             player.y = DOG_SPAWN_Y;
             player.is_grounded = 1; // Set is_grounded to true
             player.vel_y = 0;
+            jump_timer = 0; // Reset jump timer so that dog doesnt fly away
         }
     }
 }
@@ -84,17 +86,8 @@ void spawn_hydrant()
     hydrant.y = HYDRANT_SPAWN_Y;
     hydrant.vel_x = -2; // Set test speed of 2 pixels
 }
-void update()
-{
-    update_player();
-    update_hydrant();
-    display_figure(player.x, player.y, DOG_HEIGHT, DOG_WIDTH, trexPixels);
-    display_figure(hydrant.x, hydrant.y, FH_HEIGHT, FH_WIDTH, hydrantPixels);
-    show_ground();
-}
-
 /* Function for spawning character and environment on game start*/
-void initialise()
+void spawn_player()
 {
     player.is_grounded = 1; // Set on ground
     player.x = 20;
@@ -110,12 +103,30 @@ void player_jump()
         player.vel_y = JUMP_FORCE;
     }
 }
+void check_buttons()
+{
+    int btn = getbtns();
+
+    // Button 2 makes the player jump when pressed
+    if ((btn & 0x1) == 1)
+    {
+        player_jump();
+    }
+}
+void update()
+{
+    check_buttons();
+    update_player();
+    update_hydrant();
+    display_figure(player.x, player.y, DOG_HEIGHT, DOG_WIDTH, trexPixels);
+    display_figure(hydrant.x, hydrant.y, FH_HEIGHT, FH_WIDTH, hydrantPixels);
+    show_ground();
+}
 
 /* Main game function */
 void game()
 {
-    initialise();
-    player_jump();
+    spawn_player();
     spawn_hydrant();
     while (1)
     {

@@ -49,9 +49,9 @@ int main(void)
     /* SPI2CON bit ON = 1; */
     SPI2CONSET = 0x8000;
 
-    // Initaite the display
+    // Initaite the display and controls
     display_init();
+    controls_init();
 
-    
     game();
 }

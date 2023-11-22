@@ -51,10 +51,14 @@ void display_change();
 void display_clear();
 void display_figure();
 
-void intialise();
-
+// Game related functions
+void spawn_player();
 void game();
 
+// Control related functions
+void controls_init();
+int getbtns();
+int getsw();
 // Define a structure with two int arrays
 struct Box
 {
