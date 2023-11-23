@@ -49,6 +49,8 @@ void delay(int);
 void display_change();
 void display_clear();
 void display_figure();
+void display_string(int line, char *s);
+void display_update();
 
 // Game related functions
 void spawn_player();

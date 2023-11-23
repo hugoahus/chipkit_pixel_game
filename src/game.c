@@ -8,7 +8,7 @@ Dog player;
 Hydrant hydrant;
 int jump_timer = 0; // Intitiate jump timer
 
-int game_state = 1; // 0 (Menu), 1(Game), 2(Highscore)
+int game_state = 1; // 0 (Menu), 1(Game), 2(Pause), 3(highscore)
 const int DOG_SPAWN_Y = GROUND_LEVEL - DOG_HEIGHT;
 const int HYDRANT_SPAWN_Y = GROUND_LEVEL - FH_HEIGHT;
 const int JUMP_HEIGHT = 6; // Jump vertical boundary
@@ -126,8 +126,17 @@ void update()
     show_ground();
 }
 
+void highscore()
+{
+    display_string(1, "Highscore");
+    display_update();
+}
+/*  Menu screen (static display)*/
 void menu()
 {
+    display_string(1, "MENU");
+    display_string(2, "Toggle Switch 1 To Start Game");
+    display_update();
 }
 
 /* This function check for switch toggles and handles it accordingly */
@@ -139,16 +148,59 @@ int check_switches()
     {
         return 1;
     }
-    else
+
     {
         return 0;
+    }
+}
+
+void select_screen()
+{
+    // Clear all current pixels on the display
+    display_clear();
+    display_image(0, oled_display);
+    while ((game_state >= 0 && game_state < 16))
+    {
+        switch (game_state)
+        {
+        case 0:
+            // Menu
+            menu();
+            break;
+        case 1:
+            // Game loop
+            // Set the intitial spawn locations of the characters
+            spawn_player();
+            spawn_hydrant();
+            game_loop();
+            break;
+        case 2:
+            // Pause
+            break;
+        case 3:
+            // Highscore
+            highscore();
+            break;
+        default:
+            menu();
+            break;
+        }
+
+        // Check switches on every iteration (4 bit value meaning 0-15)
+        int temp = game_state; // temporary value for comparing switch combinations
+        game_state = getsw();
+        if (temp != game_state)
+        {
+            // Clear display only if there is another switch combination
+            display_clear();
+            display_image(0, oled_display);
+        }
     }
 }
 /* Main game function */
 void game_loop()
 {
-    spawn_player();
-    spawn_hydrant();
+
     while (game_state == 1)
     {
         display_clear();
@@ -159,7 +211,6 @@ void game_loop()
         game_state = check_switches();
     }
 
-    // Test code for switching displays
-    display_clear();
-    display_image(0, oled_display);
+    // If game loop is broken, go the screen select
+    select_screen();
 }
