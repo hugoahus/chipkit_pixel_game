@@ -14,13 +14,13 @@
 /* Dog constants*/
 #define DOG_WIDTH 9
 #define DOG_HEIGHT 6
+#define PLAYER_FRAME_OFFSET 2
 
 /* Fire hydrant constants*/
 #define FH_WIDTH 5
 #define FH_HEIGHT 6
 
 /* Physics constants*/
-#define GRAVITY 9.8f  // Acceleration due to gravity (m/s^2)
 #define JUMP_FORCE -2 // The initial force of the jump
 
 extern const uint8_t const font[128 * 8];
@@ -31,51 +31,19 @@ extern const uint8_t const icon[128];
 
 extern char textbuffer[4][16];
 
-// Own
-uint8_t display[32][128];  // Human readable pixel position and activation
-uint8_t oled_display[512]; // Computer readable pixel position and activation
-
-// Declare display related functions
-
-void display_image(int x, const uint8_t *data);
-void display_init(void);
-// void display_string(int line, char *s);
-// void display_update(void);
-uint8_t spi_send_recv(uint8_t data);
-
-void quicksleep(int cyc);
-void delay(int);
-
-void display_change();
-void display_clear();
-void display_figure();
-void display_string(int line, char *s);
-void display_update();
-
-// Game related functions
-void spawn_player();
-void game_loop();
-int check_switches();
-
-// Control related functions
-void controls_init();
-int getbtns();
-int getsw();
-// Define a structure with two int arrays
-struct Box
+// Define the point structure
+typedef struct
 {
-    int start_x;
-    int start_y;
-    int box_x[BOX_SIZE];
-    int box_y[BOX_SIZE];
-};
+    int x;
+    int y;
+} Point;
 
 // Dog/Player character
 typedef struct
 {
     int vel_y;
-    int y;
-    int x;
+    int y;           // Top left in sprite
+    int x;           // Top left in sprite
     int is_grounded; // Represents boolean
 
 } Dog;
@@ -88,4 +56,43 @@ typedef struct
     int y;
     int x;
 } Hydrant;
+
+// Own
+uint8_t display[32][128];  // Human readable pixel position and activation
+uint8_t oled_display[512]; // Computer readable pixel position and activation
+
+// Declare display related functions
+
+void display_image(int x, const uint8_t *data);
+void display_init(void);
+void display_reset();
+// void display_string(int line, char *s);
+// void display_update(void);
+uint8_t spi_send_recv(uint8_t data);
+
+void quicksleep(int cyc);
+void delay(int);
+
+// Alter display functions
+void display_change();
+void display_clear();
+void display_figure();
+void display_reset();
+void display_string(int line, char *s);
+void display_point(Point *p);
+void vertical_line(int x, Point *p1, Point *p2);
+void display_update();
+void menu();
+void highscore();
+
+// Game related functions
+void spawn_player();
+void game_loop();
+int check_switches();
+
+// Control related functions
+void controls_init();
+int getbtns();
+int getsw();
+
 #endif

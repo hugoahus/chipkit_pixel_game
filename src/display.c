@@ -23,7 +23,7 @@
 #define DISPLAY_TURN_OFF_VBAT (PORTFSET = 0x20)
 
 /*If any point in the array is set to one the pixel att the same position be lit*/
-uint8_t display[32][128];  // Human readable pixel position and activation
+uint8_t display[32][128];  // Human readable pixel position and activation, [y][x]
 uint8_t oled_display[512]; // Computer readable pixel position and activation
 
 /*(TAKEN FROM LAB) Quick sleep timer*/
@@ -77,11 +77,26 @@ void display_init(void)
 
     spi_send_recv(0xAF);
 
-    // Clear the display
-    display_clear();
-    // Update the display with cleared pixels
-    display_image(0, oled_display);
+    display_reset();
 }
+
+/* Test function for displaying points on a hitbox */
+// void display_point(Point *p)
+// {
+//     display[p->y][p->x] = 1;
+// }
+
+/* Test function for drawing vertical line on a hitbox*/
+void vertical_line(int x, Point *p1, Point *p2)
+{
+    int y;
+    for (y = p1->y; y <= p2->y; y++)
+    {
+        display[y][x] = 1;
+    }
+}
+
+/* Displays a sprite/figure with given height width and 2d-pixel array*/
 void display_figure(int x, int y, int height, int width, const uint8_t pixels[height][width])
 {
     int i, j;
@@ -190,6 +205,13 @@ void display_update(void)
         }
     }
 }
+void display_reset()
+{
+    // Clear the display
+    display_clear();
+    // Update the display with cleared pixels
+    display_image(0, oled_display);
+}
 
 /*This function sets all the values in the display array and oled display array into 0s*/
 void display_clear()
@@ -215,4 +237,22 @@ void display_change()
 {
     display_translate();
     display_image(0, oled_display);
+}
+
+void highscore()
+{
+    display_string(1, "Highscore");
+    display_string(2, "");
+    display_string(3, "");
+
+    display_update();
+}
+/*  Menu screen (static display)*/
+void menu()
+{
+    display_string(1, "MENU");
+    display_string(2, "SW1 - Game");
+    display_string(3, "SW2 - Highscore");
+
+    display_update();
 }
