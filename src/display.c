@@ -106,6 +106,12 @@ void display_figure(int x, int y, int height, int width, const uint8_t pixels[he
         {
             if (pixels[i][j])
             {
+                // Test for collision
+                if (display[i + y][j + x] == 1 && (i + y) < GROUND_LEVEL)
+                {
+                    display_reset();
+                    is_collision();
+                }
                 display[i + y][j + x] = 1;
             }
         }

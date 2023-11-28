@@ -1,4 +1,5 @@
 /* THIS IS THE HEADER FILE FOR THE PROJECT*/
+
 #ifndef TREX_H
 #define TREX_H
 
@@ -20,12 +21,16 @@
 #define FH_WIDTH 5
 #define FH_HEIGHT 6
 
+/* Bee constants*/
+#define BEE_WIDTH 8
+#define BEE_HEIGHT 9
 /* Physics constants*/
 #define JUMP_FORCE -2 // The initial force of the jump
 
 extern const uint8_t const font[128 * 8];
 extern const uint8_t dogPixels[DOG_HEIGHT][DOG_WIDTH];
 extern const uint8_t hydrantPixels[FH_HEIGHT][FH_WIDTH];
+extern const uint8_t beePixels[BEE_HEIGHT][BEE_WIDTH];
 /* Declare bitmap array containing icon */
 extern const uint8_t const icon[128];
 
@@ -34,9 +39,18 @@ extern char textbuffer[4][16];
 // Define the point structure
 typedef struct
 {
-    int x;
-    int y;
+    int x; // x coordinate
+    int y; // y coordinate
 } Point;
+
+// typedef struct
+// {
+//     Point top_left;
+//     Point bot_left;
+//     Point top_right;
+//     Point bot_right;
+
+// } Rectangle;
 
 // Dog/Player character
 typedef struct
@@ -57,9 +71,19 @@ typedef struct
     int x;
 } Hydrant;
 
+typedef struct
+{
+    int vel_x;
+    int vel_y;
+    int y;
+    int x;
+} Bee;
+
 // Own
 uint8_t display[32][128];  // Human readable pixel position and activation
 uint8_t oled_display[512]; // Computer readable pixel position and activation
+
+void is_collision();
 
 // Declare display related functions
 
@@ -88,7 +112,10 @@ void highscore();
 // Game related functions
 void spawn_player();
 void game_loop();
+void select_screen();
+
 int check_switches();
+void check_buttons();
 
 // Control related functions
 void controls_init();

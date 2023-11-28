@@ -53,5 +53,5 @@ int main(void)
     display_init();
     controls_init();
 
-    game_loop();
+    select_screen();
 }

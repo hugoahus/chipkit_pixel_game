@@ -1186,3 +1186,13 @@ const uint8_t const hydrantPixels[FH_HEIGHT][FH_WIDTH] = {
     {0, 1, 1, 1, 0},
 
 };
+
+const uint8_t const beePixels[BEE_HEIGHT][BEE_WIDTH] = {
+    {0, 0, 0, 0, 0, 0, 1, 0},
+    {0, 0, 0, 0, 1, 1, 0, 0},
+    {1, 1, 0, 1, 0, 1, 1, 0},
+    {0, 1, 1, 1, 1, 1, 1, 1},
+    {1, 1, 0, 1, 0, 1, 1, 0},
+    {0, 0, 0, 0, 1, 1, 0, 0},
+    {0, 0, 0, 0, 0, 0, 1, 0},
+};
