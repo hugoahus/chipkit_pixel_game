@@ -53,5 +53,7 @@ void check_buttons()
     if ((btn & 0x1) == 1)
     {
         player_jump();
+    }else if((btn & 0x4) == 4) {
+        return 4;
     }
 }

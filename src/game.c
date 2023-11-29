@@ -264,7 +264,9 @@ void select_screen()
 /* Main game function */
 void game_loop()
 {
-
+if(check_buttons() == 4) {
+    game_state = 1;
+}
     while (game_state == 1)
     {
         display_clear();
@@ -274,7 +276,7 @@ void game_loop()
 
         update_hydrant();
 
-        game_state = check_switches();
+        //game_state = check_switches();
     }
 
     // If game loop is broken, go the screen select
