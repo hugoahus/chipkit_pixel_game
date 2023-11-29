@@ -115,7 +115,7 @@ void game_loop();
 void select_screen();
 
 int check_switches();
-void check_buttons();
+int check_buttons();
 
 // Control related functions
 void controls_init();

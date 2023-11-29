@@ -36,24 +36,30 @@ int check_switches()
     int sw = getsw();
     if (sw == 0x1)
     {
-        return 1;
+        return 2;
     }
-
+    if (sw == 0x2)
+    {
+        return 3;
+    }
+    else
     {
         return 0;
     }
 }
 
 /* This function check for button presses and handles it accordingly */
-void check_buttons()
+int check_buttons()
 {
     int btn = getbtns();
 
     // Button 2 makes the player jump when pressed
     if ((btn & 0x1) == 1)
     {
-        player_jump();
-    }else if((btn & 0x4) == 4) {
+        return 2;
+    }
+    else if ((btn & 0x4) == 4)
+    {
         return 4;
     }
 }
