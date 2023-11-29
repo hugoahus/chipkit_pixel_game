@@ -197,7 +197,7 @@ void player_jump()
 void update()
 {
     // Check for updated states and movement
-    if (check_buttons() == 2)
+    if (check_buttons() == 3)
     {
         player_jump();
     }
@@ -232,22 +232,9 @@ void select_screen()
             break;
         case 1:
             // Game loop
-
-            // Set the intitial spawn locations of the characters
-            spawn_player();
-            spawn_hydrant();
-            spawn_bee();
-            game_loop();
-            while (check_switches() == 2)
-            {
-                highscore();
-            }
-
+            start_game();
             break;
         case 2:
-            // Pause
-            break;
-        case 3:
             // Highscore
             highscore();
             break;
@@ -258,17 +245,19 @@ void select_screen()
 
         // Check switches on every iteration (4 bit value meaning 0-15)
         int temp = game_state; // temporary value for comparing switch combinations
+        // Starts game
         if (game_state == 0 && check_buttons() == 4)
         {
             game_state = 1;
         }
+        // Change game_state when not in game
         if (game_state != 1)
         {
             game_state = check_switches();
         }
+        // Clear display only if there is another switch combination
         if (temp != game_state)
         {
-            // Clear display only if there is another switch combination
             display_reset();
         }
     }
@@ -277,19 +266,36 @@ void select_screen()
 /* Main game function */
 void game_loop()
 {
-
     while (game_state == 1)
     {
         display_clear();
         update();
         display_change();
         delay(FRAME_SPEED);
-
         update_hydrant();
+        // Pause Screen
+        while (check_switches() == 5)
+        {
+            pause();
+        }
+        // Reset game
+        if (check_buttons() == 2)
+        {
+            start_game();
+        }
     }
 
     // If game loop is broken, go the screen select
     select_screen();
+}
+
+void start_game()
+{
+    // Set the intitial spawn locations of the characters whick starts the game
+    spawn_player();
+    spawn_hydrant();
+    spawn_bee();
+    game_loop();
 }
 
 void is_collision(int g)

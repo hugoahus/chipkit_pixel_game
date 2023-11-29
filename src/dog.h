@@ -108,6 +108,7 @@ void vertical_line(int x, Point *p1, Point *p2);
 void display_update();
 void menu();
 void highscore();
+void pause();
 
 // Game related functions
 void spawn_player();
