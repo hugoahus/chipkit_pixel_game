@@ -27,7 +27,7 @@ int getbtns(void)
 {
     /* BTN2,BTN3,BT4 are connected to bit 5-7 on PORTD
     Right shift 5 spaces and then mask with 0111 */
-    return (PORTD >> 5) & 0x7;
+    return (PORTD >> 5) & 0xF;
 }
 
 /* This function check for switch toggles and handles it accordingly */
@@ -36,22 +36,44 @@ int check_switches()
     int sw = getsw();
     if (sw == 0x1)
     {
-        return 1;
+        return 5;
     }
-
+    if (sw == 0x2)
+    {
+        return 2;
+    }
+    if (sw == 0x3)
+    {
+        return 3;
+    }
+    if (sw == 0x4)
+    {
+        return 4;
+    }
+    else
     {
         return 0;
     }
 }
 
 /* This function check for button presses and handles it accordingly */
-void check_buttons()
+int check_buttons()
 {
     int btn = getbtns();
 
-    // Button 2 makes the player jump when pressed
+    // Button 2
     if ((btn & 0x1) == 1)
     {
-        player_jump();
+        return 2;
+    }
+    // Button 3
+    else if ((btn & 0x2) == 2)
+    {
+        return 3;
+    }
+    // Button 4
+    else if ((btn & 0x4) == 4)
+    {
+        return 4;
     }
 }

@@ -108,6 +108,7 @@ void vertical_line(int x, Point *p1, Point *p2);
 void display_update();
 void menu();
 void highscore();
+void pause();
 
 // Game related functions
 void spawn_player();
@@ -115,7 +116,7 @@ void game_loop();
 void select_screen();
 
 int check_switches();
-void check_buttons();
+int check_buttons();
 
 // Control related functions
 void controls_init();

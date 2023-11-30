@@ -245,6 +245,7 @@ void display_change()
     display_image(0, oled_display);
 }
 
+// Highscore screen
 void highscore()
 {
     display_string(1, "Highscore");
@@ -253,11 +254,22 @@ void highscore()
 
     display_update();
 }
+
+// Pause screen
+void pause()
+{
+    display_string(1, "Game is paused");
+    display_string(2, "");
+    display_string(3, "");
+
+    display_update();
+}
+
 /*  Menu screen (static display)*/
 void menu()
 {
     display_string(1, "MENU");
-    display_string(2, "SW1 - Game");
+    display_string(2, "BTN4 - Game");
     display_string(3, "SW2 - Highscore");
 
     display_update();
