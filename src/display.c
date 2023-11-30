@@ -80,22 +80,6 @@ void display_init(void)
     display_reset();
 }
 
-/* Test function for displaying points on a hitbox */
-// void display_point(Point *p)
-// {
-//     display[p->y][p->x] = 1;
-// }
-
-/* Test function for drawing vertical line on a hitbox*/
-void vertical_line(int x, Point *p1, Point *p2)
-{
-    int y;
-    for (y = p1->y; y <= p2->y; y++)
-    {
-        display[y][x] = 1;
-    }
-}
-
 /* Displays a sprite/figure with given height width and 2d-pixel array*/
 void display_figure(int x, int y, int height, int width, const uint8_t pixels[height][width])
 {
@@ -112,6 +96,7 @@ void display_figure(int x, int y, int height, int width, const uint8_t pixels[he
                     display_reset();
                     is_collision();
                 }
+
                 display[i + y][j + x] = 1;
             }
         }
@@ -162,6 +147,18 @@ void display_translate()
                 powerOfTwo <<= 1;
             }
             oled_display[column + page * 128] = oledNumber;
+        }
+    }
+}
+
+void clear_text_buffer()
+{
+    int line, i;
+    for (line = 0; line < 4; line++)
+    {
+        for (i = 0; i < 16; i++)
+        {
+            textbuffer[line][i] = ' ';
         }
     }
 }

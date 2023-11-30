@@ -9,8 +9,12 @@
 #define ROWS 32         // Nr of rows
 #define BOX_SIZE 4      // Size of box, meaning 4X4
 #define FRAME_SPEED 100 // Frame rate in Milliseconds
+#define FONT_WIDTH 5
+#define FONT_HEIGHT 7
 
 // Object constants
+#define HITBOX_OFFSET 2
+#define NR_OF_OBJ 5
 
 /* Dog constants*/
 #define DOG_WIDTH 9
@@ -35,22 +39,6 @@ extern const uint8_t beePixels[BEE_HEIGHT][BEE_WIDTH];
 extern const uint8_t const icon[128];
 
 extern char textbuffer[4][16];
-
-// Define the point structure
-typedef struct
-{
-    int x; // x coordinate
-    int y; // y coordinate
-} Point;
-
-// typedef struct
-// {
-//     Point top_left;
-//     Point bot_left;
-//     Point top_right;
-//     Point bot_right;
-
-// } Rectangle;
 
 // Dog/Player character
 typedef struct
@@ -103,8 +91,6 @@ void display_clear();
 void display_figure();
 void display_reset();
 void display_string(int line, char *s);
-void display_point(Point *p);
-void vertical_line(int x, Point *p1, Point *p2);
 void display_update();
 void menu();
 void highscore();
@@ -122,5 +108,7 @@ int check_buttons();
 void controls_init();
 int getbtns();
 int getsw();
+
+void clear_text_buffer();
 
 #endif
