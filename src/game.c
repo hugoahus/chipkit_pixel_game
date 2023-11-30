@@ -13,7 +13,7 @@ Bee bee;
 Point top_left_dog, bot_left_dog, top_right_dog, bot_right_dog, top_left_hydrant, bot_left_hydrant, top_right_hydrant, bot_right_hydrant;
 
 int jump_timer = 0; // Intitiate jump timer
-int game_state = 1; // 0 (Menu), 1(Game), 2(Pause), 3(highscore)
+int game_state = 0; // 0 (Menu), 1(Game), 2(Pause), 3(highscore)
 
 const int DOG_SPAWN_Y = 23;
 const int DOG_SPAWN_X = 20;
@@ -194,11 +194,13 @@ void player_jump()
     }
 }
 
-
 void update()
 {
     // Check for updated states and movement
-    check_buttons();
+    if (check_buttons() == 3)
+    {
+        player_jump();
+    }
 
     update_player();
     update_hydrant();
@@ -213,7 +215,6 @@ void update()
     display_figure(hydrant.x, hydrant.y, FH_HEIGHT, FH_WIDTH, hydrantPixels);
     display_figure(bee.x, bee.y, BEE_HEIGHT, BEE_WIDTH, beePixels);
 }
-
 
 /* This function evaluates the toggle switches and chooses screen accordingly*/
 void select_screen()
@@ -231,19 +232,11 @@ void select_screen()
             break;
         case 1:
             // Game loop
-
-            // Set the intitial spawn locations of the characters
-            spawn_player();
-            spawn_hydrant();
-            spawn_bee();
-            game_loop();
+            start_game();
             break;
         case 2:
             // Highscore
             highscore();
-            break;
-        case 3:
-            // Pause
             break;
         default:
             menu();
@@ -252,10 +245,19 @@ void select_screen()
 
         // Check switches on every iteration (4 bit value meaning 0-15)
         int temp = game_state; // temporary value for comparing switch combinations
-        game_state = getsw();
+        // Starts game
+        if (game_state == 0 && check_buttons() == 4)
+        {
+            game_state = 1;
+        }
+        // Change game_state when not in game
+        if (game_state != 1)
+        {
+            game_state = check_switches();
+        }
+        // Clear display only if there is another switch combination
         if (temp != game_state)
         {
-            // Clear display only if there is another switch combination
             display_reset();
         }
     }
@@ -264,21 +266,36 @@ void select_screen()
 /* Main game function */
 void game_loop()
 {
-
     while (game_state == 1)
     {
         display_clear();
         update();
         display_change();
         delay(FRAME_SPEED);
-
         update_hydrant();
-
-        game_state = check_switches();
+        // Pause Screen
+        while (check_switches() == 5)
+        {
+            pause();
+        }
+        // Reset game
+        if (check_buttons() == 2)
+        {
+            start_game();
+        }
     }
 
     // If game loop is broken, go the screen select
     select_screen();
+}
+
+void start_game()
+{
+    // Set the intitial spawn locations of the characters whick starts the game
+    spawn_player();
+    spawn_hydrant();
+    spawn_bee();
+    game_loop();
 }
 
 void is_collision(int g)
