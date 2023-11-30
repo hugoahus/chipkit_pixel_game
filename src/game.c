@@ -35,58 +35,6 @@ void show_ground()
     }
 }
 
-/* Collision with objects */
-int check_collision(Point top_left_dog, Point bot_left_dog, Point top_right_dog, Point bot_right_dog,
-                    Point top_left_hydrant, Point bot_left_hydrant, Point top_right_hydrant, Point bot_right_hydrant)
-{
-    // Check if any of the conditions for non-collision are true
-    if (
-        (bot_left_hydrant.x >= bot_left_dog.x && bot_left_hydrant.x <= bot_right_dog.x && bot_left_hydrant.y >= bot_left_dog.y && bot_left_hydrant.y <= top_left_dog.y) ||
-        (bot_right_hydrant.x >= bot_left_dog.x && bot_right_hydrant.x <= bot_right_dog.x && bot_right_hydrant.y >= bot_left_dog.y && bot_right_hydrant.y <= top_left_dog.y) ||
-        (top_left_hydrant.x >= bot_left_dog.x && top_left_hydrant.x <= bot_right_dog.x && top_left_hydrant.y >= bot_left_dog.y && top_left_hydrant.y <= top_left_dog.y) ||
-        (top_right_hydrant.x >= bot_left_dog.x && top_right_hydrant.x <= bot_right_dog.x && top_right_hydrant.y >= bot_left_dog.y && top_right_hydrant.y <= top_left_dog.y))
-    {
-        return 1; // Collision detected
-    }
-    else
-    {
-        return 0; // No collision
-    }
-}
-
-void collision(Point top_left_dog, Point bot_left_dog, Point top_right_dog, Point bot_right_dog,
-               Point top_left_hydrant, Point bot_left_hydrant, Point top_right_hydrant, Point bot_right_hydrant)
-{
-    // Check collision between player and hydrant
-    int is_collision = check_collision(top_left_dog, bot_left_dog, top_right_dog, bot_right_dog,
-                                       top_left_hydrant, bot_left_hydrant, top_right_hydrant, bot_right_hydrant);
-
-    if (is_collision == 1)
-    {
-        // Handle collision action, e.g., end the game, decrease player health, etc.
-        game_state = 0; // Set game state to menu or any other appropriate state
-    }
-}
-
-void update_dog_hitbox()
-{
-    // Update hitbox coordinates based on the player's position
-
-    // Top left corner
-    top_left_dog.x = player.x - HITBOX_OFFSET;
-    top_left_dog.y = player.y - HITBOX_OFFSET;
-
-    // Update other corners based on width and height
-    bot_left_dog.x = top_left_dog.x;
-    bot_left_dog.y = top_left_dog.y + DOG_HITBOX_HEIGHT;
-
-    top_right_dog.x = top_left_dog.x + DOG_HITBOX_WIDTH;
-    top_right_dog.y = top_left_dog.y;
-
-    bot_right_dog.x = top_left_dog.x + DOG_HITBOX_WIDTH;
-    bot_right_dog.y = top_left_dog.y + DOG_HITBOX_HEIGHT;
-}
-
 /* Changes the players position  */
 void update_player()
 {
@@ -116,24 +64,6 @@ void update_player()
     // Update hitbox
 }
 
-void update_hydrant_hitbox()
-{
-    // Update hydrant hitbox coordinates based on the hydrant's position
-
-    // Top left corner
-    top_left_hydrant.x = hydrant.x;
-    top_left_hydrant.y = hydrant.y;
-
-    // Update other corners based on width and height
-    bot_left_hydrant.x = top_left_hydrant.x;
-    bot_left_hydrant.y = top_left_hydrant.y + HYDRANT_HITBOX_HEIGHT;
-
-    top_right_hydrant.x = top_left_hydrant.x + HYDRANT_HITBOX_WIDTH;
-    top_right_hydrant.y = top_left_hydrant.y;
-
-    bot_right_hydrant.x = top_left_hydrant.x + HYDRANT_HITBOX_WIDTH;
-    bot_right_hydrant.y = top_left_hydrant.y + HYDRANT_HITBOX_HEIGHT;
-}
 void update_bee()
 {
     bee.x += bee.vel_x;
@@ -143,8 +73,6 @@ void update_hydrant()
 
     hydrant.y = HYDRANT_SPAWN_Y;
     hydrant.x += hydrant.vel_x; // Move x-position
-
-    update_hydrant_hitbox();
 }
 void spawn_bee()
 {
@@ -170,19 +98,6 @@ void spawn_player()
     player.x = DOG_SPAWN_X;
     player.y = DOG_SPAWN_Y;
     player.vel_y = 0;
-
-    // Initiate points for players hitbox
-    // top_left_dog.x = player.x - HITBOX_OFFSET;
-    // top_left_dog.y = player.y - HITBOX_OFFSET;
-
-    // bot_left_dog.x = top_left.x;
-    // bot_left_dog.y = top_left.y + HITBOX_HEIGHT;
-
-    // top_right_dog.x = top_left.x + HITBOX_WIDTH;
-    // top_right_dog.y = top_left.y;
-
-    // bot_right_dog.x = top_left.x + HITBOX_WIDTH;
-    // bot_right_dog.y = top_left.y + HITBOX_HEIGHT;
 }
 
 void player_jump()
@@ -193,7 +108,6 @@ void player_jump()
         player.vel_y = JUMP_FORCE;
     }
 }
-
 
 void update()
 {
@@ -213,7 +127,6 @@ void update()
     display_figure(hydrant.x, hydrant.y, FH_HEIGHT, FH_WIDTH, hydrantPixels);
     display_figure(bee.x, bee.y, BEE_HEIGHT, BEE_WIDTH, beePixels);
 }
-
 
 /* This function evaluates the toggle switches and chooses screen accordingly*/
 void select_screen()
