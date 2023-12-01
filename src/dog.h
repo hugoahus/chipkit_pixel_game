@@ -1,7 +1,13 @@
 /* THIS IS THE HEADER FILE FOR THE PROJECT*/
 
-#ifndef TREX_H
-#define TREX_H
+#ifndef DOG_H
+#define DOG_H
+
+/* Map specific constants */
+
+#define E_NR_OF_OBJ 2
+#define M_NR_OF_OBJ 3
+#define H_NR_OF_OBJ 4
 
 /* Display constants */
 #define GROUND_LEVEL 29 // Which row that is ground level
@@ -54,25 +60,45 @@ Dog player;
 
 typedef struct
 {
-    int vel_x;
-    int y;
     int x;
+    int y;
+    int vel_x;
+    int is_active;
+
 } Hydrant;
 
 typedef struct
 {
+    int x;
+    int y;
     int vel_x;
     int vel_y;
-    int y;
-    int x;
+    int y_mov; // Restricts y-movement
+
+    int is_active;
 } Bee;
+
+typedef struct
+{
+    int next_hydr;  // Index of next hydrant
+    int next_bee;   // Index of next bee
+    int hydr_timer; // Timer that decides when hydr spawn
+    int bee_timer;  // Timer for bee spawn
+    int real_size;  // How many objects there are actually in the array (rest are null, max 4 obj)
+    Hydrant hydrants[H_NR_OF_OBJ];
+    Bee bees[H_NR_OF_OBJ];
+
+} Map;
+
+/* Map related stuff */
+extern Map maps[3];
 
 // Own
 uint8_t display[32][128];  // Human readable pixel position and activation
 uint8_t oled_display[512]; // Computer readable pixel position and activation
 
 void is_collision();
-
+void reset_map();
 // Declare display related functions
 
 void display_image(int x, const uint8_t *data);
