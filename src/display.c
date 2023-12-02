@@ -151,6 +151,7 @@ void display_translate()
     }
 }
 
+/* Function clears the textbuffer*/
 void clear_text_buffer()
 {
     int line, i;
@@ -208,6 +209,7 @@ void display_update(void)
         }
     }
 }
+/* Function resets all pixels on the array*/
 void display_reset()
 {
     // Clear the display
@@ -268,6 +270,17 @@ void menu()
     display_string(1, "MENU");
     display_string(2, "BTN4 - Game");
     display_string(3, "SW2 - Highscore");
+
+    display_update();
+}
+
+/* Screen that is displayed before the game starts*/
+void choose_diff()
+{
+    display_string(0, "Choose Map");
+    display_string(1, "BTN2 - Easy");
+    display_string(2, "BTN3 - Medium");
+    display_string(3, "BTN4 - Hard");
 
     display_update();
 }

@@ -121,6 +121,7 @@ void display_update();
 void menu();
 void highscore();
 void pause();
+void choose_diff();
 
 // Game related functions
 void spawn_player();

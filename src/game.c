@@ -18,7 +18,7 @@ Dog player;
 
 int jump_timer = 0; // Intitiate jump timer
 int game_state = 0; // 0 (Menu), 1(Game), 2(Pause), 3(highscore)
-int map_index = 2;  // Decides which map/difficulty
+int map_index = 0;  // Decides which map/difficulty, easy by default
 int score = 0;      // keeps track of score
 
 // Timer stuff
@@ -64,6 +64,7 @@ void update_player()
             // update_dog_hitbox();
         }
     }
+    display_figure(player.x, player.y, DOG_HEIGHT, DOG_WIDTH, dogPixels);
 }
 
 /* Updates the position of all the active bees*/
@@ -120,15 +121,6 @@ void update_hydrants(Map *map)
     }
 }
 
-// void spawn_bee()
-// {
-//     bee.x = 128;
-//     bee.y = 10;
-//     bee.y_mov = 0;
-//     bee.vel_x = -1;
-//     bee.vel_y = -1; // downwards to begin with
-// }
-
 /* Function for spawning character and environment on game start*/
 void spawn_player()
 {
@@ -166,7 +158,6 @@ void update()
     update_hydrants(&maps[map_index]);
 
     show_ground();
-    display_figure(player.x, player.y, DOG_HEIGHT, DOG_WIDTH, dogPixels);
 
     // Increment spawn count for bee and hydrant
     spawn_count++;
@@ -187,8 +178,8 @@ void start_game()
 /* This function evaluates the toggle switches and chooses screen accordingly*/
 void select_screen()
 {
+    int button = 0;
     // Clear all current pixels on the display
-    display_reset();
 
     while ((game_state >= 0 && game_state < 16))
     {
@@ -205,6 +196,15 @@ void select_screen()
         case 2:
             // Highscore
             highscore();
+            break;
+        case 4:
+            // Choose difficulty
+            choose_diff();
+            button = check_buttons();
+            if (button > 0)
+            {
+                map_index = button - 2;
+            }
             break;
         default:
             menu();
@@ -226,6 +226,7 @@ void select_screen()
         // Clear display only if there is another switch combination
         if (temp != game_state)
         {
+            clear_text_buffer();
             display_reset();
         }
     }

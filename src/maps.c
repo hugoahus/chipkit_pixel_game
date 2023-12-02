@@ -47,7 +47,7 @@ Map maps[3] = {
             {128 - BEE_WIDTH, 10, -1, -1, 0, 0},
             {0, 0, 0, 0, 0, 0}
         }
-    }, // <-- Missing comma here
+    }, 
     // Hard map
     {
         .next_hydr = -1,
@@ -78,11 +78,13 @@ void reset_map(Map *map, int size)
     int i;
     for (i = 0; i < size; i++)
     {
+        // Reset hydrants
         map->hydrants[i].x = 128 - FH_WIDTH;
         map->hydrants[i].y = GROUND_LEVEL - FH_HEIGHT;
         map->hydrants[i].is_active = 0; // set inactive
         map->next_hydr = -1;            // Index count start on 0 so set to negative 1
 
+        // Reset bees
         map->bees[i].x = 128 - BEE_WIDTH;
         map->bees[i].y = 10;
         map->bees[i].vel_x = -1;
