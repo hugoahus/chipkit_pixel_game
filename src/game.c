@@ -12,9 +12,6 @@
 
 Dog player;
 
-// Test structs, implement array with multiple structs instead
-// Bee bee;
-// Bee bees[NR_OF_OBJ];
 
 int jump_timer = 0; // Intitiate jump timer
 int game_state = 0; // 0 (Menu), 1(Game), 2(Pause), 3(highscore)
@@ -188,6 +185,11 @@ void select_screen()
         case 0:
             // Menu
             menu();
+            // Starts game
+            if (check_buttons() == 4)
+            {
+                game_state = 1;
+            }
             break;
         case 1:
             // Game loop
@@ -203,7 +205,7 @@ void select_screen()
             button = check_buttons();
             if (button > 0)
             {
-                map_index = button - 2;
+                map_index = button - 2; // Convert btn press to index in maps array
             }
             break;
         default:
@@ -213,11 +215,6 @@ void select_screen()
 
         // Check switches on every iteration (4 bit value meaning 0-15)
         int temp = game_state; // temporary value for comparing switch combinations
-        // Starts game
-        if (game_state == 0 && check_buttons() == 4)
-        {
-            game_state = 1;
-        }
         // Change game_state when not in game
         if (game_state != 1)
         {
