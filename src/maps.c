@@ -6,6 +6,8 @@ for intiating and handling different maps/difficulties of the game
 #include <pic32mx.h>
 #include "dog.h"
 
+
+
 // Array of maps, index 0 (easy), 1 (medium), 2(hard)
 Map maps[3] = {
     // Easy Map
@@ -22,8 +24,8 @@ Map maps[3] = {
             {0, 0, 0, 0}
         },
         .bees = {
-            {128 - BEE_WIDTH, 10, -1, -1, 0, 0},
-            {128 - BEE_WIDTH, 15, -1, -1, 0, 0},
+            {128 - BEE_WIDTH, 17, -1, -1, 0, 0},
+            {128 - BEE_WIDTH, 18, -1, -1, 0, 0},
             {0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0}
         }

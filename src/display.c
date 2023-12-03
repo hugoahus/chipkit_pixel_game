@@ -94,7 +94,7 @@ void display_figure(int x, int y, int height, int width, const uint8_t pixels[he
                 if (display[i + y][j + x] == 1 && (i + y) < GROUND_LEVEL)
                 {
                     display_reset();
-                    is_collision();
+                    game_over();
                 }
 
                 display[i + y][j + x] = 1;
@@ -102,13 +102,43 @@ void display_figure(int x, int y, int height, int width, const uint8_t pixels[he
         }
     }
 }
+/* Clears a figures pixels from the screen*/
+void clear_figure(int x, int y, int height, int width)
+{
+    int i, j;
+    for (i = 0; i < height; i++)
+    {
+        for (j = 0; j < width; j++)
+        {
+            display[i + y][j + x] = 0;
+        }
+    }
+}
 
+void clear_enemies(Map *map)
+{
+    int i;
+    for (i = 0; i < map->real_size; i++)
+    {
+        // Clear hydrant if active
+        if (map->hydrants[i].is_active)
+        {
+            clear_figure(map->hydrants[i].x, map->hydrants[i].y, FH_HEIGHT, FH_WIDTH);
+        }
+
+        // Clear hydrant if active
+        if (map->bees[i].is_active)
+        {
+            clear_figure(map->bees[i].x, map->bees[i].y, BEE_HEIGHT, BEE_WIDTH);
+        }
+    }
+}
 /*(TAKEN FROM LAB) This will print any image on the display with the help of an array containing the map of the active and inactive pixels*/
 void display_image(int x, const uint8_t *data)
 { // LAB
     int i, j;
-
-    for (i = 0; i < 4; i++)
+    /* OBS, Ignore first row as its intended for score*/
+    for (i = 1; i < 4; i++)
     {
         DISPLAY_CHANGE_TO_COMMAND_MODE;
 
@@ -182,11 +212,22 @@ void display_string(int line, char *s)
             textbuffer[line][i] = ' ';
 }
 
-/*(TAKEN FROM LAB) Display text*/
 void display_update(void)
 {
     int i, j, k;
     int c;
+    int new_textbuffer[4][16];
+
+    // Copy the new state to a temporary buffer
+    for (i = 0; i < 4; i++)
+    {
+        for (j = 0; j < 16; j++)
+        {
+            new_textbuffer[i][j] = textbuffer[i][j];
+        }
+    }
+
+    // Update the display using the new state
     for (i = 0; i < 4; i++)
     {
         DISPLAY_CHANGE_TO_COMMAND_MODE;
@@ -200,12 +241,21 @@ void display_update(void)
 
         for (j = 0; j < 16; j++)
         {
-            c = textbuffer[i][j];
+            c = new_textbuffer[i][j];
             if (c & 0x80)
                 continue;
 
             for (k = 0; k < 8; k++)
                 spi_send_recv(font[c * 8 + k]);
+        }
+    }
+
+    // Update the current state buffer
+    for (i = 0; i < 4; i++)
+    {
+        for (j = 0; j < 16; j++)
+        {
+            textbuffer[i][j] = new_textbuffer[i][j];
         }
     }
 }
@@ -231,25 +281,37 @@ void display_clear()
         }
     }
 
-    for (i = 0; i < 512; i++)
-    {
-        oled_display[i] = 0;
-    }
+    // for (i = 0; i < 512; i++)
+    // {
+    //     oled_display[i] = 0;
+    // }
 }
 
 /*This function calls all the necessary functions for the game to start*/
 void display_change()
 {
+
     display_translate();
+
     display_image(0, oled_display);
 }
 
 // Highscore screen
 void highscore()
 {
-    display_string(1, "Highscore");
-    display_string(2, "");
-    display_string(3, "");
+    int i;
+    display_string(0, "Highscore");
+    for (i = 0; i < NR_OF_HIGHSCORES; i++)
+    {
+        // Convert to string
+        char result[13];
+        char score_str[8];
+        int_to_str(highscores[i].score, score_str);
+
+        // Concatenate strings
+        concat_strings(highscores[i].name, score_str, result);
+        display_string((i + 1), result);
+    }
 
     display_update();
 }
@@ -283,4 +345,13 @@ void choose_diff()
     display_string(3, "BTN4 - Hard");
 
     display_update();
+}
+
+void display_score(int score)
+{
+    char score_str[16];
+    int_to_str(score, score_str);
+
+    // Display the score string in the top right corner
+    display_string(0, score_str);
 }

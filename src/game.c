@@ -11,18 +11,29 @@
 #define NR_OF_OBJ 5
 
 Dog player;
+Highscore highscores[NR_OF_HIGHSCORES] = {
+    {"AXE", 8},
+    {"BOB", 3},
+    {"CAT", 1},
+};
 
+char testname[] = "LOL"; // Test value for highscore names
+
+// char player_name[] = "AXE";
+// char result[13];
 
 int jump_timer = 0; // Intitiate jump timer
 int game_state = 0; // 0 (Menu), 1(Game), 2(Pause), 3(highscore)
 int map_index = 0;  // Decides which map/difficulty, easy by default
-int score = 0;      // keeps track of score
+
+int score_lim = 20; // Decides after how many delays the score should be updated
+int score = 0;      // Keeps track of score
 
 // Timer stuff
 int spawn_count = 0;
 
 // Constants (may be moved)
-const int DOG_SPAWN_Y = 23;
+const int DOG_SPAWN_Y = GROUND_LEVEL - DOG_HEIGHT;
 const int DOG_SPAWN_X = 20;
 const int HYDRANT_SPAWN_Y = GROUND_LEVEL - FH_HEIGHT;
 const int JUMP_HEIGHT = 6; // Jump vertical boundary
@@ -111,7 +122,7 @@ void update_hydrants(Map *map)
             // Check boundary (fixes weird y-movement on end of screen)
             if (map->hydrants[i].x < 0)
             {
-                map->hydrants[i].x = 126;
+                map->hydrants[i].x = 124;
             }
             display_figure(map->hydrants[i].x, map->hydrants[i].y, FH_HEIGHT, FH_WIDTH, hydrantPixels);
         }
@@ -162,10 +173,15 @@ void update()
 
 void start_game()
 {
+    // Score related actions
+    display_clear();
     clear_text_buffer();
-    jump_timer = 0; // reset jump timer so that flying dog bug doesnt happen
-    // Set the intitial spawn locations of the characters whick starts the game
+    score = 0;
+    score_lim = 20;
 
+    jump_timer = 0; // Reset jump timer so that flying dog bug doesnt happen
+
+    // Map and player spawns
     reset_map(&maps[map_index], maps[map_index].real_size);
     spawn_player();
 
@@ -198,6 +214,7 @@ void select_screen()
         case 2:
             // Highscore
             highscore();
+            // display_string(0, result);
             break;
         case 4:
             // Choose difficulty
@@ -234,14 +251,35 @@ void game_loop()
 {
     while (game_state == 1)
     {
-        display_clear();
+        clear_text_buffer();
+        clear_enemies(&maps[map_index]);
+        clear_figure(player.x, player.y, DOG_HEIGHT, DOG_WIDTH);
+
+        // display_clear();
+
+        if (score_lim >= 20)
+        {
+            score_lim = 0;
+            score++;
+            display_score(score);
+            display_update();
+        }
+        score_lim++;
+
+        // Update the display
+
+        /* OBS, there is an issue with the display_change and display_update order that makes the screen flicker*/
         update();
         display_change();
+
         delay(FRAME_SPEED);
+
+        // Score stuff
 
         //  Pause Screen
         while (check_switches() == 5)
         {
+
             pause();
         }
         // Reset game
@@ -255,17 +293,44 @@ void game_loop()
     select_screen();
 }
 
+/* Checks and updates highscore if needed*/
+void check_highscore()
+{
+    int i;
+    int next_score = score;
+
+    // Check if the current score is higher than any of the existing high scores
+    for (i = 0; i < NR_OF_HIGHSCORES; i++)
+    {
+        if (next_score > highscores[i].score)
+        {
+            // Shift down the existing high scores to make room for the new one
+            int j;
+            for (j = NR_OF_HIGHSCORES - 1; j > i; j--)
+            {
+                highscores[j] = highscores[j - 1];
+            }
+
+            // Insert the new high score
+            highscores[i].score = next_score;
+
+            // CHANGE PLAYER NAME
+            switch_names(highscores[i].name, testname, highscores[i].name, testname);
+
+            break; // Exit the loop since the high score has been added
+        }
+    }
+}
+
 /* Function is called when game is over (collision)*/
 void game_over()
 {
 
     // Save highscore
+    check_highscore();
+    // Clear score
+    clear_text_buffer();
 
-    //
-}
-
-void is_collision(int g)
-{
     game_state = 0;
     select_screen();
 }

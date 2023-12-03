@@ -2,6 +2,10 @@
 
 #ifndef DOG_H
 #define DOG_H
+/* Highscore stuff */
+
+#define NR_OF_HIGHSCORES 3
+#define MAX_NAME_LENGTH 3
 
 /* Map specific constants */
 
@@ -10,7 +14,7 @@
 #define H_NR_OF_OBJ 4
 
 /* Display constants */
-#define GROUND_LEVEL 29 // Which row that is ground level
+#define GROUND_LEVEL 30 // Which row that is ground level
 #define COLUMNS 128     // Nr of columns
 #define ROWS 32         // Nr of rows
 #define BOX_SIZE 4      // Size of box, meaning 4X4
@@ -90,14 +94,20 @@ typedef struct
 
 } Map;
 
+typedef struct
+{
+    char name[MAX_NAME_LENGTH];
+    int score;
+} Highscore;
+
 /* Map related stuff */
 extern Map maps[3];
-
+extern Highscore highscores[NR_OF_HIGHSCORES];
 // Own
 uint8_t display[32][128];  // Human readable pixel position and activation
 uint8_t oled_display[512]; // Computer readable pixel position and activation
 
-void is_collision();
+void game_over();
 void reset_map();
 // Declare display related functions
 
@@ -118,6 +128,10 @@ void display_figure();
 void display_reset();
 void display_string(int line, char *s);
 void display_update();
+void display_score(int score);
+void display_figure(int x, int y, int height, int width, const uint8_t pixels[height][width]);
+void clear_figure(int x, int y, int height, int width);
+void clear_enemies(Map *map);
 void menu();
 void highscore();
 void pause();
@@ -137,5 +151,10 @@ int getbtns();
 int getsw();
 
 void clear_text_buffer();
+
+// Helper functions
+void int_to_str(int num, char *str);
+void concat_strings(const char *str1, const char *str2, char *result);
+void switch_names(const char *name1, const char *name2, char *result1, char *result2);
 
 #endif
