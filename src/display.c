@@ -329,9 +329,10 @@ void pause()
 /*  Menu screen (static display)*/
 void menu()
 {
-    display_string(1, "MENU");
-    display_string(2, "BTN4 - Game");
-    display_string(3, "SW2 - Highscore");
+    display_string(0, "MENU");
+    display_string(1, "BTN4 - Game");
+    display_string(2, "SW2 - Highscore");
+    display_string(3, "SW3 - Map");
 
     display_update();
 }
@@ -347,9 +348,17 @@ void choose_diff()
     display_update();
 }
 
+void enter_name()
+{
+    display_string(0, "Enter name");
+    display_string(1, player_name);
+
+    display_update();
+}
+
 void display_score(int score)
 {
-    char score_str[16];
+    char score_str[8];
     int_to_str(score, score_str);
 
     // Display the score string in the top right corner

@@ -103,6 +103,7 @@ typedef struct
 /* Map related stuff */
 extern Map maps[3];
 extern Highscore highscores[NR_OF_HIGHSCORES];
+extern char player_name[3];
 // Own
 uint8_t display[32][128];  // Human readable pixel position and activation
 uint8_t oled_display[512]; // Computer readable pixel position and activation
@@ -136,6 +137,7 @@ void menu();
 void highscore();
 void pause();
 void choose_diff();
+void enter_name();
 
 // Game related functions
 void spawn_player();

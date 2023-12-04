@@ -72,3 +72,20 @@ void switch_names(const char *name1, const char *name2, char *result1, char *res
     result1[MAX_NAME_LENGTH] = '\0';
     result2[MAX_NAME_LENGTH] = '\0';
 }
+
+/* Increments the hex value of player name characters*/
+void increment_hex(int index)
+{
+    // Most right character
+
+    switch (check_buttons())
+    {
+    case 4:
+        (player_name[index])++;
+        break;
+
+    case 3:
+        (player_name[index])--;
+        break;
+    }
+}

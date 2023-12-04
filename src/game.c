@@ -11,16 +11,14 @@
 #define NR_OF_OBJ 5
 
 Dog player;
+
 Highscore highscores[NR_OF_HIGHSCORES] = {
     {"AXE", 8},
-    {"BOB", 3},
+    {"BOB", 4},
     {"CAT", 1},
 };
 
-char testname[] = "LOL"; // Test value for highscore names
-
-// char player_name[] = "AXE";
-// char result[13];
+char player_name[] = {0x41, 0x41, 0x41}; // Default value for player name
 
 int jump_timer = 0; // Intitiate jump timer
 int game_state = 0; // 0 (Menu), 1(Game), 2(Pause), 3(highscore)
@@ -293,10 +291,41 @@ void game_loop()
     select_screen();
 }
 
+/* Function allows players to enter name, otherwise it uses the default name*/
+void name()
+{
+    int sw = check_switches();
+    while ((sw >= 0 && sw < 16))
+    {
+        switch (sw)
+        {
+        case 4:
+            increment_hex(0);
+            break;
+        case 2:
+            increment_hex(1);
+            break;
+        case 5:
+            increment_hex(2);
+            break;
+        }
+        // Press button 2 to confirm name
+        if (check_buttons() == 2)
+        {
+            break;
+        }
+        clear_text_buffer();
+        sw = check_switches();
+        enter_name();
+        delay(150); // Small delay to avoid screen flicker
+    }
+}
+
 /* Checks and updates highscore if needed*/
-void check_highscore()
+int check_highscore()
 {
     int i;
+    int is_highscore = 0;
     int next_score = score;
 
     // Check if the current score is higher than any of the existing high scores
@@ -304,6 +333,7 @@ void check_highscore()
     {
         if (next_score > highscores[i].score)
         {
+            is_highscore = 1;
             // Shift down the existing high scores to make room for the new one
             int j;
             for (j = NR_OF_HIGHSCORES - 1; j > i; j--)
@@ -314,12 +344,14 @@ void check_highscore()
             // Insert the new high score
             highscores[i].score = next_score;
 
-            // CHANGE PLAYER NAME
-            switch_names(highscores[i].name, testname, highscores[i].name, testname);
+            // CHANGE PLAYER NAME HERE
+            name();
+            switch_names(highscores[i].name, player_name, highscores[i].name, player_name);
 
             break; // Exit the loop since the high score has been added
         }
     }
+    return is_highscore;
 }
 
 /* Function is called when game is over (collision)*/
@@ -328,6 +360,7 @@ void game_over()
 
     // Save highscore
     check_highscore();
+
     // Clear score
     clear_text_buffer();
 
