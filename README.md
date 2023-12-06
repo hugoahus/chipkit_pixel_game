@@ -6,7 +6,7 @@ By Erik Smit and Hugo Larsson Wilhelmsson.
 
 The purpose of this project is to develop a game similar to the Chrome Dino Game that appears when trying to browse Chrome while offline. This game shall be developed on the embedded platform, ChipKit. In this game, the player will control an object/character and try to maneuver various objects/enemies by jumping. These requirements must be met.
 
-- Standard T-Rex game rules are implemented (random object/enemy generation).
+- Standard Chrome Dino game rules are implemented (random object/enemy generation).
 - Enemies move in both X and Y directions.
 - The player must be able to control the playable character's vertical movement by clicking a button.
 
