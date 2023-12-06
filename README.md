@@ -1,10 +1,10 @@
-# T-Rex Game using the built-in display
+# Dog Game using the built-in display (Chrome Dino Game)
 
 By Erik Smit and Hugo Larsson Wilhelmsson.
 
 ## Objective and Requirements
 
-The purpose of this project is to develop the T-Rex game that appears when trying to browse Chrome while offline, on the embedded platform. In this game, the player will control an object/character and try to maneuver various objects/enemies by jumping. These requirements must be met.
+The purpose of this project is to develop a game similar to the Chrome Dino Game that appears when trying to browse Chrome while offline. This game shall be developed on the embedded platform, ChipKit. In this game, the player will control an object/character and try to maneuver various objects/enemies by jumping. These requirements must be met.
 
 - Standard T-Rex game rules are implemented (random object/enemy generation).
 - Enemies move in both X and Y directions.
@@ -34,4 +34,19 @@ Firstly the correct serial path needs to be located by running one of the follow
 
 After finding the correct path run
 - make
-- make install TTYDEV=/dev/your_serial_path
+- make install TTYDEV=/dev/"your_serial_path"
+
+## Controls
+From the menu screen the controls for switching screens are displayed. These are the controls for playing the game:
+- BTN 2: Reset game
+- BTN 3: Jump
+
+If the player has achieved a new highscore, they will be confronted to enter a name for the highscore list. The name must be 3 characters in length. To select which character to change in the name, the player needs to toggle the corresponding switch first. These are the switch combinations
+- SW1: Right-most character
+- SW2: Middle character
+- SW3: Left-most character
+
+After toggling a switch the button presses to alter the character, move up or down in the ASCII-table, are:
+- BTN4: Up
+- BTN3: Down
+
