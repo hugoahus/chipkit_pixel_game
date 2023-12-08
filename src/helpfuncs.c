@@ -1,8 +1,18 @@
+/*
+This file is written 2023 by Erik Smit
+This file contains helper functions used in other functions.
+*/
+
 #include <stdint.h>  /* Declarations of uint_32 and the like */
 #include <pic32mx.h> /* Declarations of system-specific addresses etc */
 #include "dog.h"
 
-/* Converts int to str*/
+/*
+This function converts int to str
+
+Input: an integer number and a pointer to a string.
+Output: none, but the string will be the converted int.
+*/
 void int_to_str(int num, char *str)
 {
     int i = 0;
@@ -35,7 +45,12 @@ void int_to_str(int num, char *str)
     str[length] = '\0';
 }
 
-/* Function to concatenate two strings*/
+/*
+Function to concatenate two strings
+
+Input: two strings to concatenate and a pointer to the result string.
+Output: none, but the result string will contain the concatenated strings.
+*/
 void concat_strings(const char *str1, const char *str2, char *result)
 {
     int i = 0, j = 0;
@@ -58,7 +73,12 @@ void concat_strings(const char *str1, const char *str2, char *result)
     result[i + j] = '\0';
 }
 
-/* Switch the names of two highscore name values */
+/*
+Switch the names of two highscore name values
+
+Input: two strings (names) to switch and pointers to the result strings.
+Output: none, but the result strings will contain the switched names.
+*/
 void switch_names(const char *name1, const char *name2, char *result1, char *result2)
 {
     int i;
@@ -73,19 +93,32 @@ void switch_names(const char *name1, const char *name2, char *result1, char *res
     result2[MAX_NAME_LENGTH] = '\0';
 }
 
-/* Increments the hex value of player name characters*/
+/*
+Increments the hex value of player name characters
+
+Input: an index indicating which character to increment.
+Output: none, but the corresponding character in the player_name array will be incremented or decremented based on button input.
+*/
 void increment_hex(int index)
 {
-    // Most right character
-
-    switch (check_buttons())
+    // Only allow alphabetical characters
+    if (player_name[index] >= 'A' && player_name[index] <= 'Z')
     {
-    case 4:
-        (player_name[index])++;
-        break;
+        switch (check_buttons())
+        {
+        case 4:
+            if (player_name[index] < 'Z')
+            {
+                (player_name[index])++;
+                break;
+            }
 
-    case 3:
-        (player_name[index])--;
-        break;
+        case 3:
+            if (player_name[index] > 'A')
+            {
+                (player_name[index])--;
+                break;
+            }
+        }
     }
 }

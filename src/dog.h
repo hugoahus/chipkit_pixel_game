@@ -1,4 +1,4 @@
-/* THIS IS THE HEADER FILE FOR THE PROJECT*/
+/* THIS IS THE HEADER FILE FOR THE ENTIRE PROJECT*/
 
 #ifndef DOG_H
 #define DOG_H
@@ -9,9 +9,10 @@
 
 /* Map specific constants */
 
-#define E_NR_OF_OBJ 2
-#define M_NR_OF_OBJ 3
-#define H_NR_OF_OBJ 4
+#define DOG_SPAWN_Y (GROUND_LEVEL - DOG_HEIGHT)
+#define DOG_SPAWN_X 20
+#define HYDRANT_SPAWN_Y (GROUND_LEVEL - FH_HEIGHT)
+#define JUMP_HEIGHT 6
 
 /* Display constants */
 #define GROUND_LEVEL 30 // Which row that is ground level
@@ -41,6 +42,9 @@
 /* Physics constants*/
 #define JUMP_FORCE -2 // The initial force of the jump
 
+/* Other Constants */
+#define SCORE_TIMER 25
+
 extern const uint8_t const font[128 * 8];
 extern const uint8_t dogPixels[DOG_HEIGHT][DOG_WIDTH];
 extern const uint8_t hydrantPixels[FH_HEIGHT][FH_WIDTH];
@@ -54,9 +58,9 @@ extern char textbuffer[4][16];
 typedef struct
 {
     int vel_y;
-    int y;           // Top left in sprite
-    int x;           // Top left in sprite
-    int is_grounded; // Represents boolean
+    int y;               // Top left in sprite
+    int x;               // Top left in sprite
+    uint8_t is_grounded; // Represents boolean
 
 } Dog;
 
@@ -67,7 +71,7 @@ typedef struct
     int x;
     int y;
     int vel_x;
-    int is_active;
+    uint8_t is_active;
 
 } Hydrant;
 
@@ -79,7 +83,7 @@ typedef struct
     int vel_y;
     int y_mov; // Restricts y-movement
 
-    int is_active;
+    uint8_t is_active;
 } Bee;
 
 typedef struct
@@ -89,8 +93,8 @@ typedef struct
     int hydr_timer; // Timer that decides when hydr spawn
     int bee_timer;  // Timer for bee spawn
     int real_size;  // How many objects there are actually in the array (rest are null, max 4 obj)
-    Hydrant hydrants[H_NR_OF_OBJ];
-    Bee bees[H_NR_OF_OBJ];
+    Hydrant hydrants[4];
+    Bee bees[4];
 
 } Map;
 
@@ -104,6 +108,8 @@ typedef struct
 extern Map maps[3];
 extern Highscore highscores[NR_OF_HIGHSCORES];
 extern char player_name[3];
+extern int player_lives;
+extern int lights;
 // Own
 uint8_t display[32][128];  // Human readable pixel position and activation
 uint8_t oled_display[512]; // Computer readable pixel position and activation
@@ -132,7 +138,7 @@ void display_update();
 void display_score(int score);
 void display_figure(int x, int y, int height, int width, const uint8_t pixels[height][width]);
 void clear_figure(int x, int y, int height, int width);
-void clear_enemies(Map *map);
+inline void clear_enemies(const Map *map);
 void menu();
 void highscore();
 void pause();
@@ -143,6 +149,8 @@ void enter_name();
 void spawn_player();
 void game_loop();
 void select_screen();
+void start_game();
+void game_over();
 
 int check_switches();
 int check_buttons();
@@ -151,6 +159,8 @@ int check_buttons();
 void controls_init();
 int getbtns();
 int getsw();
+void show_lives(int lives);
+void is_collision();
 
 void clear_text_buffer();
 

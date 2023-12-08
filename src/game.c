@@ -1,4 +1,7 @@
-/* This file handles the game and the game loop */
+/*
+This files is written 2023 by Erik Smit and Hugo Larsson Wilhelmsson
+This file handles the game and the game loop
+*/
 
 #include <stdio.h>
 #include <string.h>
@@ -7,11 +10,9 @@
 #include <pic32mx.h> /* Declarations of system-specific addresses etc */
 #include "dog.h"
 
-#define HITBOX_OFFSET 2
-#define NR_OF_OBJ 5
-
 Dog player;
 
+// Highscore list with predefined values
 Highscore highscores[NR_OF_HIGHSCORES] = {
     {"AXE", 8},
     {"BOB", 4},
@@ -19,6 +20,7 @@ Highscore highscores[NR_OF_HIGHSCORES] = {
 };
 
 char player_name[] = {0x41, 0x41, 0x41}; // Default value for player name
+int player_lives = 0x7;                  // Corresponds to lights also
 
 int jump_timer = 0; // Intitiate jump timer
 int game_state = 0; // 0 (Menu), 1(Game), 2(Pause), 3(highscore)
@@ -29,12 +31,6 @@ int score = 0;      // Keeps track of score
 
 // Timer stuff
 int spawn_count = 0;
-
-// Constants (may be moved)
-const int DOG_SPAWN_Y = GROUND_LEVEL - DOG_HEIGHT;
-const int DOG_SPAWN_X = 20;
-const int HYDRANT_SPAWN_Y = GROUND_LEVEL - FH_HEIGHT;
-const int JUMP_HEIGHT = 6; // Jump vertical boundary
 
 /* Turns on the display pixels for the static ground (which is a line of pixels)*/
 void show_ground()
@@ -169,13 +165,15 @@ void update()
     spawn_count++;
 }
 
+/* This functions starts the game and clears necessary stuff */
 void start_game()
 {
+
     // Score related actions
     display_clear();
     clear_text_buffer();
-    score = 0;
-    score_lim = 20;
+
+    show_lives(player_lives);
 
     jump_timer = 0; // Reset jump timer so that flying dog bug doesnt happen
 
@@ -207,6 +205,8 @@ void select_screen()
             break;
         case 1:
             // Game loop
+            display_score(score);
+            display_update();
             start_game();
             break;
         case 2:
@@ -247,15 +247,16 @@ void select_screen()
 /* Main game function */
 void game_loop()
 {
+
     while (game_state == 1)
     {
-        clear_text_buffer();
+
         clear_enemies(&maps[map_index]);
         clear_figure(player.x, player.y, DOG_HEIGHT, DOG_WIDTH);
 
         // display_clear();
 
-        if (score_lim >= 20)
+        if (score_lim >= SCORE_TIMER)
         {
             score_lim = 0;
             score++;
@@ -277,14 +278,12 @@ void game_loop()
         //  Pause Screen
         while (check_switches() == 5)
         {
-
+            // Still show score
+            display_score(score);
             pause();
         }
-        // Reset game
-        if (check_buttons() == 2)
-        {
-            start_game();
-        }
+        // Clear game pause line
+        display_string(1, "");
     }
 
     // If game loop is broken, go the screen select
@@ -357,13 +356,26 @@ int check_highscore()
 /* Function is called when game is over (collision)*/
 void game_over()
 {
+    player_lives >>= 1;
 
-    // Save highscore
-    check_highscore();
+    if (player_lives < 1)
+    {
+        show_lives(player_lives);
+        player_lives = 0x7;
 
-    // Clear score
-    clear_text_buffer();
+        // Save highscore
+        check_highscore();
 
-    game_state = 0;
-    select_screen();
+        // Clear score
+        clear_text_buffer();
+        score = 0;
+        game_state = 0;
+
+        select_screen();
+    }
+
+    else
+    {
+        start_game();
+    }
 }

@@ -1,6 +1,6 @@
 /* mipslabfunc.c
    This file written 2015 by F Lundevall
-   Some parts are original code written by Axel Isaksson
+   Some parts are original code written by Erik Smit
 
    For copyright and licensing, see file COPYING */
 
@@ -115,7 +115,10 @@ void clear_figure(int x, int y, int height, int width)
     }
 }
 
-void clear_enemies(Map *map)
+/*
+This function clears all the enemy objects within a map by setting the pixels to 0.
+*/
+inline void clear_enemies(const Map *map)
 {
     int i;
     for (i = 0; i < map->real_size; i++)
@@ -281,10 +284,6 @@ void display_clear()
         }
     }
 
-    // for (i = 0; i < 512; i++)
-    // {
-    //     oled_display[i] = 0;
-    // }
 }
 
 /*This function calls all the necessary functions for the game to start*/
