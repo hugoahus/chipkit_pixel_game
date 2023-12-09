@@ -41,6 +41,17 @@ void controls_init(void)
     // Set bits 11 through 5 as input in port D
     volatile int *trisd = (volatile int *)0xbf8860d0;
     *trisd = *trisd | 0x0fe0;
+
+    T2CON = 0x00008070; //  configured using family reference manual
+
+    TMR2 = 0x0; // clear Timer 2 counter
+
+    // PR2 - Timer 2 Period Register: The PR2 register is used to set the period for Timer 2,
+    // which defines the time between time-out events. The calculation for setting the period as follows:
+    // Given a desired time between time-out events of 100 milliseconds (10 timeouts per second)
+    // Assuming an 80 MHz clock, divide by 256 (due to the prescaling of 1:256) to get the timer frequency
+    // Then divide by 10 to achive 10 timeouts per second
+    // This gives 80,000,000 / 256 / 10 = 31,250 (0x7A12 in Hexadecimal)
 }
 
 /*

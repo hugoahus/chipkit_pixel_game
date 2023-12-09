@@ -3,7 +3,8 @@ This file is written 2023 by Erik Smit
 This file contains helper functions used in other functions.
 */
 
-#include <stdint.h>  /* Declarations of uint_32 and the like */
+#include <stdint.h> /* Declarations of uint_32 and the like */
+#include <stdlib.h>
 #include <pic32mx.h> /* Declarations of system-specific addresses etc */
 #include "dog.h"
 
@@ -13,6 +14,9 @@ This function converts int to str
 Input: an integer number and a pointer to a string.
 Output: none, but the string will be the converted int.
 */
+
+void *stdin, *stdout, *stderr; // Declare pointers for library functions
+
 void int_to_str(int num, char *str)
 {
     int i = 0;
@@ -121,4 +125,24 @@ void increment_hex(int index)
             }
         }
     }
+}
+
+// Custom seed initialization function
+void custom_seed_init(unsigned int seed)
+{
+    // Use some hardware-dependent value, such as analogRead() or a timer value
+    srand(seed);
+}
+
+// Function to generate a random number between min and max (inclusive)
+int custom_random(int min, int max)
+{
+    // Ensure that max is greater than min
+    if (max <= min)
+    {
+        return min;
+    }
+
+    // Generate a random number and scale it to the desired range
+    return (rand() % (max - min + 1)) + min;
 }

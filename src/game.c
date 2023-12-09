@@ -11,7 +11,7 @@ This file handles the game and the game loop
 #include "dog.h"
 
 Dog player;
-
+int temp_timer = 0; // Saves a timer value for seed on game start
 // Highscore list with predefined values
 Highscore highscores[NR_OF_HIGHSCORES] = {
     {"AXE", 8},
@@ -19,12 +19,13 @@ Highscore highscores[NR_OF_HIGHSCORES] = {
     {"CAT", 1},
 };
 
-char player_name[] = {0x41, 0x41, 0x41}; // Default value for player name
+char player_name[] = {0x41, 0x41, 0x41}; // Default value for player name (AAA)
 int player_lives = 0x7;                  // Corresponds to lights also
 
-int jump_timer = 0; // Intitiate jump timer
-int game_state = 0; // 0 (Menu), 1(Game), 2(Pause), 3(highscore)
-int map_index = 0;  // Decides which map/difficulty, easy by default
+int jump_timer = 0;    // Intitiate jump timer
+int game_state = 0;    // 0 (Menu), 1(Game), 2(Pause), 3(highscore)
+int map_index = 0;     // Decides which map/difficulty, easy by default
+unsigned int seed = 0; // Depends on how long time the player takes to start the game
 
 int score_lim = 20; // Decides after how many delays the score should be updated
 int score = 0;      // Keeps track of score
@@ -47,7 +48,6 @@ void update_player()
 {
     if (!player.is_grounded)
     {
-
         player.y += player.vel_y; // Decrement the y position
         jump_timer++;
 
@@ -73,16 +73,20 @@ void update_player()
 void update_bees(Map *map)
 {
     int i;
+    // Check if next bee can spawn
     if ((spawn_count % map->bee_timer) == 0 && map->next_bee < map->real_size)
     {
         (map->next_bee)++;
         map->bees[map->next_bee].is_active = 1;
     }
+    // Update all the active bees
     for (i = 0; i < map->real_size; i++)
     {
         if (map->bees[i].is_active)
         {
             map->bees[i].x += map->bees[i].vel_x;
+
+            // Bee vertical movement
             if (map->bees[i].y_mov >= 4)
             {
                 map->bees[i].vel_y *= -1;
@@ -90,24 +94,27 @@ void update_bees(Map *map)
             }
             map->bees[i].y += map->bees[i].vel_y;
             (map->bees[i].y_mov)++;
+
             // Check boundary
             if (map->bees[i].x < 0)
             {
                 map->bees[i].x = 124;
             }
-            display_figure(map->bees[i].x, map->bees[i].y, BEE_HEIGHT, BEE_WIDTH, beePixels);
+            display_figure(map->bees[i].x, map->bees[i].y, BEE_S_HEIGHT, BEE_S_WIDTH, beeAltPixels);
         }
     }
 }
 void update_hydrants(Map *map)
 {
     int i;
+    // Check if next hydrant can spawn
     if ((spawn_count % map->hydr_timer) == 0 && map->next_hydr < map->real_size)
     {
         (map->next_hydr)++;
         map->hydrants[map->next_hydr].is_active = 1;
     }
-    for (i = 0; i < map->real_size; i++)
+
+        for (i = 0; i < map->real_size; i++)
     {
         if (map->hydrants[i].is_active)
         {
@@ -123,7 +130,7 @@ void update_hydrants(Map *map)
     }
 }
 
-/* Function for spawning character and environment on game start*/
+/* Function for spawning character and environment on game start, sets values */
 void spawn_player()
 {
     player.is_grounded = 1; // Set on ground
@@ -146,7 +153,6 @@ void player_jump()
 /* Main update function */
 void update()
 {
-    int i;
     // Check for updated states and movement
     if (check_buttons() == 3)
     {
@@ -165,9 +171,23 @@ void update()
     spawn_count++;
 }
 
+/* This function initiates random elements for the different maps */
+void random_map_elements()
+{
+    // Generate new seed
+    temp_timer = TMR2;
+    custom_seed_init(TMR2);
+
+    // Set random spawn timer for the enemy objects within the map
+    maps[map_index].bee_timer = custom_random(50, 100);
+    maps[map_index].hydr_timer = custom_random(50, 100);
+}
+
 /* This functions starts the game and clears necessary stuff */
 void start_game()
 {
+    // Implement random elements
+    random_map_elements();
 
     // Score related actions
     display_clear();
@@ -188,10 +208,12 @@ void start_game()
 void select_screen()
 {
     int button = 0;
-    // Clear all current pixels on the display
+
+    seed++; // Increment seed (seed depends on the time it takes for the the player to start the game)
 
     while ((game_state >= 0 && game_state < 16))
     {
+
         switch (game_state)
         {
         case 0:
@@ -212,7 +234,6 @@ void select_screen()
         case 2:
             // Highscore
             highscore();
-            // display_string(0, result);
             break;
         case 4:
             // Choose difficulty
@@ -251,11 +272,13 @@ void game_loop()
     while (game_state == 1)
     {
 
+        // Clear current object pixels on the screen
         clear_enemies(&maps[map_index]);
         clear_figure(player.x, player.y, DOG_HEIGHT, DOG_WIDTH);
 
-        // display_clear();
+        // display_clear(); // alternative to above (clears the whole screen)
 
+        // Increase score and update display
         if (score_lim >= SCORE_TIMER)
         {
             score_lim = 0;
@@ -280,10 +303,16 @@ void game_loop()
         {
             // Still show score
             display_score(score);
+            // TEST CODE FOR SEEING SEED
+            char seed_str[8];
+            int_to_str(temp_timer, seed_str);
+            display_string(3, seed_str);
             pause();
         }
         // Clear game pause line
         display_string(1, "");
+        display_string(2, "");
+        display_string(3, "");
     }
 
     // If game loop is broken, go the screen select
@@ -356,7 +385,7 @@ int check_highscore()
 /* Function is called when game is over (collision)*/
 void game_over()
 {
-    player_lives >>= 1;
+    player_lives >>= 1; 
 
     if (player_lives < 1)
     {

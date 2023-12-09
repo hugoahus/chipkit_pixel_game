@@ -16,6 +16,7 @@
 
 /* Display constants */
 #define GROUND_LEVEL 30 // Which row that is ground level
+#define ROOF_LEVEL 8
 #define COLUMNS 128     // Nr of columns
 #define ROWS 32         // Nr of rows
 #define BOX_SIZE 4      // Size of box, meaning 4X4
@@ -39,6 +40,11 @@
 /* Bee constants*/
 #define BEE_WIDTH 8
 #define BEE_HEIGHT 9
+
+/* Bee ALTERNATIVE  constants*/
+#define BEE_S_WIDTH 6
+#define BEE_S_HEIGHT 3
+
 /* Physics constants*/
 #define JUMP_FORCE -2 // The initial force of the jump
 
@@ -48,7 +54,9 @@
 extern const uint8_t const font[128 * 8];
 extern const uint8_t dogPixels[DOG_HEIGHT][DOG_WIDTH];
 extern const uint8_t hydrantPixels[FH_HEIGHT][FH_WIDTH];
+
 extern const uint8_t beePixels[BEE_HEIGHT][BEE_WIDTH];
+extern const uint8_t beeAltPixels[BEE_S_HEIGHT][BEE_S_WIDTH];
 /* Declare bitmap array containing icon */
 extern const uint8_t const icon[128];
 
@@ -110,6 +118,7 @@ extern Highscore highscores[NR_OF_HIGHSCORES];
 extern char player_name[3];
 extern int player_lives;
 extern int lights;
+extern unsigned int seed;
 // Own
 uint8_t display[32][128];  // Human readable pixel position and activation
 uint8_t oled_display[512]; // Computer readable pixel position and activation
@@ -168,5 +177,7 @@ void clear_text_buffer();
 void int_to_str(int num, char *str);
 void concat_strings(const char *str1, const char *str2, char *result);
 void switch_names(const char *name1, const char *name2, char *result1, char *result2);
+void custom_seed_init();
+int custom_random(int min, int max);
 
 #endif

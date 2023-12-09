@@ -1195,3 +1195,10 @@ const uint8_t const beePixels[BEE_HEIGHT][BEE_WIDTH] = {
     {0, 0, 0, 0, 1, 1, 0, 0},
     {0, 0, 0, 0, 0, 0, 1, 0},
 };
+/* Define the bee pixel data for the alternate bee sprite*/
+const uint8_t const beeAltPixels[BEE_S_HEIGHT][BEE_S_WIDTH] = {
+    {1, 0, 1, 1, 1, 0},
+    {0, 1, 1, 1, 1, 1},
+    {1, 0, 1, 1, 1, 0},
+
+};

@@ -283,7 +283,6 @@ void display_clear()
             display[row][column] = 0;
         }
     }
-
 }
 
 /*This function calls all the necessary functions for the game to start*/
@@ -319,8 +318,7 @@ void highscore()
 void pause()
 {
     display_string(1, "Game is paused");
-    display_string(2, "");
-    display_string(3, "");
+    display_string(2, "SEED");
 
     display_update();
 }
