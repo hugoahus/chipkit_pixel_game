@@ -44,7 +44,7 @@ We think this was a fun project that we’ve learned a lot from. The most fun pa
 The hardest part of the code was trying to implement random spawn of enemies, both by randomly choosing which enemy should spawn, but also exactly when they would spawn. This was the last implemented feature in the game, which we, if we had more time, would work more so for example enemies don't spawn in ways where it is impossible for the user to get past. This is rare but may occur.
 
 
-## How to Compile and Install on ChipKITt
+## How to Compile and Install on ChipKIT
 To be able to compile and run this code on the ChipKIT, you need to install the latest version of the MCB32 toolchain, which is a c-compiler and assembler for the Uno32 boards.
 
 Firstly the correct serial path needs to be located by running one of the following commands
