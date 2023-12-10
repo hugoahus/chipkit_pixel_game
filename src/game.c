@@ -1,4 +1,7 @@
-/* This file handles the game and the game loop */
+/*
+This file is written 2023 by Erik Smit and Hugo Larsson Wilhelmsson.
+This file handles the game and the game loop.
+*/
 
 #include <stdio.h>
 #include <string.h>
@@ -7,34 +10,32 @@
 #include <pic32mx.h> /* Declarations of system-specific addresses etc */
 #include "dog.h"
 
-#define HITBOX_OFFSET 2
-#define NR_OF_OBJ 5
-
 Dog player;
-
+int temp_timer = 0; // Saves a timer value for seed on game start
+// Highscore list with predefined values
 Highscore highscores[NR_OF_HIGHSCORES] = {
     {"AXE", 8},
     {"BOB", 4},
     {"CAT", 1},
 };
 
-char player_name[] = {0x41, 0x41, 0x41}; // Default value for player name
+char player_name[] = {0x41, 0x41, 0x41}; // Default value for player name (AAA)
+int player_lives = 0x7;                  // Corresponds to lights also
 
-int jump_timer = 0; // Intitiate jump timer
-int game_state = 0; // 0 (Menu), 1(Game), 2(Pause), 3(highscore)
-int map_index = 0;  // Decides which map/difficulty, easy by default
+const int spawn_y_levels[] = {BEE_MIN_Y, BEE_MAX_Y};
+
+int game_delay = FRAME_SPEED;
+
+int jump_timer = 0;    // Intitiate jump timer
+int game_state = 0;    // 0 (Menu), 1(Game), 2(Pause), 3(highscore)
+int map_index = 0;     // Decides which map/difficulty, easy by default
+unsigned int seed = 0; // Depends on how long time the player takes to start the game
 
 int score_lim = 20; // Decides after how many delays the score should be updated
 int score = 0;      // Keeps track of score
 
 // Timer stuff
 int spawn_count = 0;
-
-// Constants (may be moved)
-const int DOG_SPAWN_Y = GROUND_LEVEL - DOG_HEIGHT;
-const int DOG_SPAWN_X = 20;
-const int HYDRANT_SPAWN_Y = GROUND_LEVEL - FH_HEIGHT;
-const int JUMP_HEIGHT = 6; // Jump vertical boundary
 
 /* Turns on the display pixels for the static ground (which is a line of pixels)*/
 void show_ground()
@@ -51,7 +52,6 @@ void update_player()
 {
     if (!player.is_grounded)
     {
-
         player.y += player.vel_y; // Decrement the y position
         jump_timer++;
 
@@ -67,50 +67,107 @@ void update_player()
             player.is_grounded = 1; // Set is_grounded to true
             player.vel_y = 0;
             jump_timer = 0; // Reset jump timer so that dog doesnt fly away
-            // update_dog_hitbox();
         }
     }
     display_figure(player.x, player.y, DOG_HEIGHT, DOG_WIDTH, dogPixels);
+}
+
+void enemy_spawn(Map *map)
+{
+    if ((spawn_count % map->spawn_timer) == 0)
+    {
+        int enemy_type = custom_random(0, 1); // Generate random number for enemy type
+        switch (enemy_type)
+        {
+        // Hydrant
+        case 0:
+            // Next hydrant can spawn
+
+            // Restart the next_hydr index
+            if (map->next_hydr >= map->real_size)
+            {
+                map->next_hydr = 0;
+            }
+            // Else increment next hydr
+            else
+            {
+                (map->next_hydr)++;
+            }
+            map->hydrants[map->next_hydr].is_active = 1;
+
+            break;
+        // Bee
+        case 1:
+            // Restart the next_hydr index
+            if (map->next_bee >= map->real_size)
+            {
+                map->next_bee = 0;
+            }
+            // Else increment next hydr
+            else
+            {
+                (map->next_bee)++;
+            }
+            map->bees[map->next_bee].is_active = 1;
+            // map->bees[map->next_bee].y = spawn_y_levels[custom_random(0, 1)];
+            break;
+        }
+        maps[map_index].spawn_timer = custom_random(45, 100); // Generate new spawn timer
+    }
 }
 
 /* Updates the position of all the active bees*/
 void update_bees(Map *map)
 {
     int i;
-    if ((spawn_count % map->bee_timer) == 0 && map->next_bee < map->real_size)
-    {
-        (map->next_bee)++;
-        map->bees[map->next_bee].is_active = 1;
-    }
+
+    // Update all the active bees
     for (i = 0; i < map->real_size; i++)
     {
+
         if (map->bees[i].is_active)
         {
             map->bees[i].x += map->bees[i].vel_x;
-            if (map->bees[i].y_mov >= 4)
-            {
-                map->bees[i].vel_y *= -1;
-                map->bees[i].y_mov = 0;
-            }
+
+            // Bee vertical movement
             map->bees[i].y += map->bees[i].vel_y;
-            (map->bees[i].y_mov)++;
-            // Check boundary
-            if (map->bees[i].x < 0)
+
+            // Check if bee has reached the target y-level
+            if (map->bees[i].y <= BEE_MIN_Y) // Assuming BEE_MIN_Y is 12
             {
-                map->bees[i].x = 124;
+                // Set y to the target y-level
+                map->bees[i].y = BEE_MIN_Y;
+                // Reverse the vertical movement direction
+                map->bees[i].vel_y *= -1;
             }
-            display_figure(map->bees[i].x, map->bees[i].y, BEE_HEIGHT, BEE_WIDTH, beePixels);
+            else if (map->bees[i].y >= BEE_MAX_Y) // Assuming BEE_MAX_Y is 16
+            {
+                // Set y to the target y-level
+                map->bees[i].y = BEE_MAX_Y;
+                // Reverse the vertical movement direction
+                map->bees[i].vel_y *= -1;
+            }
+
+            // Check boundary
+            if (map->bees[i].x < BEE_S_WIDTH)
+            {
+                map->bees[i].is_active = 0;
+                map->bees[i].y = spawn_y_levels[custom_random(0, 1)];
+                map->bees[i].x = 128 - BEE_S_WIDTH;
+            }
+            else
+            {
+                display_figure(map->bees[i].x, map->bees[i].y, BEE_S_HEIGHT, BEE_S_WIDTH, beeAltPixels);
+            }
         }
     }
 }
+
+/* Function that updates all the hydrant objects */
 void update_hydrants(Map *map)
 {
     int i;
-    if ((spawn_count % map->hydr_timer) == 0 && map->next_hydr < map->real_size)
-    {
-        (map->next_hydr)++;
-        map->hydrants[map->next_hydr].is_active = 1;
-    }
+
     for (i = 0; i < map->real_size; i++)
     {
         if (map->hydrants[i].is_active)
@@ -118,16 +175,20 @@ void update_hydrants(Map *map)
             map->hydrants[i].y = HYDRANT_SPAWN_Y;
             map->hydrants[i].x += map->hydrants[i].vel_x; // Move x-position
             // Check boundary (fixes weird y-movement on end of screen)
-            if (map->hydrants[i].x < 0)
+            if (map->hydrants[i].x < 0 + FH_WIDTH)
             {
-                map->hydrants[i].x = 124;
+                map->hydrants[i].is_active = 0;
+                map->hydrants[i].x = 128 - FH_WIDTH;
             }
-            display_figure(map->hydrants[i].x, map->hydrants[i].y, FH_HEIGHT, FH_WIDTH, hydrantPixels);
+            else
+            {
+                display_figure(map->hydrants[i].x, map->hydrants[i].y, FH_HEIGHT, FH_WIDTH, hydrantPixels);
+            }
         }
     }
 }
 
-/* Function for spawning character and environment on game start*/
+/* Function for spawning character and environment on game start, sets values */
 void spawn_player()
 {
     player.is_grounded = 1; // Set on ground
@@ -150,7 +211,6 @@ void player_jump()
 /* Main update function */
 void update()
 {
-    int i;
     // Check for updated states and movement
     if (check_buttons() == 3)
     {
@@ -159,7 +219,7 @@ void update()
 
     update_player();
     // Display changes
-
+    enemy_spawn(&maps[map_index]);
     update_bees(&maps[map_index]);
     update_hydrants(&maps[map_index]);
 
@@ -169,13 +229,29 @@ void update()
     spawn_count++;
 }
 
+/* This function initiates random elements for the different maps */
+void random_map_elements()
+{
+    // Generate new seed
+    temp_timer = TMR2;
+    custom_seed_init(TMR2);
+    int spawn_cont = maps[map_index].real_size; // Value used for spawning intervall to prevent colision
+
+    // Test values
+    maps[map_index].spawn_timer = custom_random(45, 100);
+}
+
+/* This functions starts the game and clears necessary stuff */
 void start_game()
 {
+    // Implement random elements
+    random_map_elements();
+
     // Score related actions
     display_clear();
     clear_text_buffer();
-    score = 0;
-    score_lim = 20;
+
+    show_lives(player_lives);
 
     jump_timer = 0; // Reset jump timer so that flying dog bug doesnt happen
 
@@ -190,10 +266,13 @@ void start_game()
 void select_screen()
 {
     int button = 0;
-    // Clear all current pixels on the display
+
+    seed++; // Increment seed (seed depends on the time it takes for the the player to start the game)
 
     while ((game_state >= 0 && game_state < 16))
     {
+        // Switch case displaying the different screens
+
         switch (game_state)
         {
         case 0:
@@ -207,12 +286,14 @@ void select_screen()
             break;
         case 1:
             // Game loop
+            display_score(score);
+            display_update();
+            game_delay = FRAME_SPEED; // Set original frame speed
             start_game();
             break;
         case 2:
             // Highscore
             highscore();
-            // display_string(0, result);
             break;
         case 4:
             // Choose difficulty
@@ -244,47 +325,64 @@ void select_screen()
     }
 }
 
+/* Evaluates if score */
+void check_score()
+{
+    // Increase score and update display
+    if (score_lim >= SCORE_TIMER)
+    {
+        score_lim = 0;
+        score++;
+        display_score(score);
+        display_update();
+
+        // Check to increase game speed
+        if (score % 10 == 0 && game_delay > 25)
+        {
+            game_delay -= 15; // Increase refresh rate, increasing speed (fine tune value)
+        }
+    }
+    score_lim++;
+}
+
 /* Main game function */
 void game_loop()
 {
+
     while (game_state == 1)
     {
-        clear_text_buffer();
-        clear_enemies(&maps[map_index]);
-        clear_figure(player.x, player.y, DOG_HEIGHT, DOG_WIDTH);
 
-        // display_clear();
+        // Clear current object pixels on the screen (ALTERNATIVE WAY OF CLEARING PIXELS)
+        // clear_enemies(&maps[map_index]);
+        // clear_figure(player.x, player.y, DOG_HEIGHT, DOG_WIDTH);
 
-        if (score_lim >= 20)
-        {
-            score_lim = 0;
-            score++;
-            display_score(score);
-            display_update();
-        }
-        score_lim++;
+        display_clear(); // alternative to above (clears the whole screen)
+
+        // Evaluate the score
+        check_score();
 
         // Update the display
-
         /* OBS, there is an issue with the display_change and display_update order that makes the screen flicker*/
         update();
         display_change();
 
-        delay(FRAME_SPEED);
+        delay(game_delay);
 
-        // Score stuff
-
-        //  Pause Screen
+        // Pause Screen
         while (check_switches() == 5)
         {
-
+            // Still show score
+            display_score(score);
+            // TEST CODE FOR SEEING SEED
+            char seed_str[8];
+            int_to_str(temp_timer, seed_str);
+            display_string(3, seed_str);
             pause();
         }
-        // Reset game
-        if (check_buttons() == 2)
-        {
-            start_game();
-        }
+        // Clear game pause line
+        display_string(1, "");
+        display_string(2, "");
+        display_string(3, "");
     }
 
     // If game loop is broken, go the screen select
@@ -357,13 +455,26 @@ int check_highscore()
 /* Function is called when game is over (collision)*/
 void game_over()
 {
+    player_lives >>= 1;
 
-    // Save highscore
-    check_highscore();
+    if (player_lives < 1)
+    {
+        show_lives(player_lives);
+        player_lives = 0x7;
 
-    // Clear score
-    clear_text_buffer();
+        // Save highscore
+        check_highscore();
 
-    game_state = 0;
-    select_screen();
+        // Clear score
+        clear_text_buffer();
+        score = 0;
+        game_state = 0;
+
+        select_screen();
+    }
+
+    else
+    {
+        start_game();
+    }
 }

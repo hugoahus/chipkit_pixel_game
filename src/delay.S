@@ -2,6 +2,7 @@
 
   # labwork.S
   # Written 2015-2017 by F Lundevall
+  # Some parts are original code written 2023 by Erik Smit and Hugo Larsson Wilhelmsson
   # Skeleton file for IS1200/IS1500 lab 1.
   # The macros PUSH and POP are in the public domain.
   # Please add your own code at the end of the file.

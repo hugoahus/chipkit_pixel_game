@@ -1,4 +1,8 @@
-/* THIS IS THE HEADER FILE FOR THE PROJECT*/
+
+/*
+THIS IS THE HEADER FILE FOR THE ENTIRE PROJECT
+This file is written 2023 by Erik Smit and Hugo Larsson Wilhelmsson
+*/
 
 #ifndef DOG_H
 #define DOG_H
@@ -9,12 +13,14 @@
 
 /* Map specific constants */
 
-#define E_NR_OF_OBJ 2
-#define M_NR_OF_OBJ 3
-#define H_NR_OF_OBJ 4
+#define DOG_SPAWN_Y (GROUND_LEVEL - DOG_HEIGHT)
+#define DOG_SPAWN_X 20
+#define HYDRANT_SPAWN_Y (GROUND_LEVEL - FH_HEIGHT)
+#define JUMP_HEIGHT 6
 
 /* Display constants */
 #define GROUND_LEVEL 30 // Which row that is ground level
+#define ROOF_LEVEL 8
 #define COLUMNS 128     // Nr of columns
 #define ROWS 32         // Nr of rows
 #define BOX_SIZE 4      // Size of box, meaning 4X4
@@ -38,13 +44,25 @@
 /* Bee constants*/
 #define BEE_WIDTH 8
 #define BEE_HEIGHT 9
+
+/* Bee ALTERNATIVE  constants*/
+#define BEE_S_WIDTH 6
+#define BEE_S_HEIGHT 3
+#define BEE_MIN_Y 12
+#define BEE_MAX_Y 16
+
 /* Physics constants*/
 #define JUMP_FORCE -2 // The initial force of the jump
+
+/* Other Constants */
+#define SCORE_TIMER 25
 
 extern const uint8_t const font[128 * 8];
 extern const uint8_t dogPixels[DOG_HEIGHT][DOG_WIDTH];
 extern const uint8_t hydrantPixels[FH_HEIGHT][FH_WIDTH];
+
 extern const uint8_t beePixels[BEE_HEIGHT][BEE_WIDTH];
+extern const uint8_t beeAltPixels[BEE_S_HEIGHT][BEE_S_WIDTH];
 /* Declare bitmap array containing icon */
 extern const uint8_t const icon[128];
 
@@ -54,9 +72,9 @@ extern char textbuffer[4][16];
 typedef struct
 {
     int vel_y;
-    int y;           // Top left in sprite
-    int x;           // Top left in sprite
-    int is_grounded; // Represents boolean
+    int y;               // Top left in sprite
+    int x;               // Top left in sprite
+    uint8_t is_grounded; // Represents boolean
 
 } Dog;
 
@@ -67,7 +85,7 @@ typedef struct
     int x;
     int y;
     int vel_x;
-    int is_active;
+    uint8_t is_active;
 
 } Hydrant;
 
@@ -77,20 +95,17 @@ typedef struct
     int y;
     int vel_x;
     int vel_y;
-    int y_mov; // Restricts y-movement
-
-    int is_active;
+    uint8_t is_active;
 } Bee;
 
 typedef struct
 {
-    int next_hydr;  // Index of next hydrant
-    int next_bee;   // Index of next bee
-    int hydr_timer; // Timer that decides when hydr spawn
-    int bee_timer;  // Timer for bee spawn
-    int real_size;  // How many objects there are actually in the array (rest are null, max 4 obj)
-    Hydrant hydrants[H_NR_OF_OBJ];
-    Bee bees[H_NR_OF_OBJ];
+    int next_hydr; // Index of next hydrant
+    int next_bee;  // Index of next bee
+    int spawn_timer;
+    int real_size; // How many objects there are actually in the array (rest are null, max 4 obj)
+    Hydrant hydrants[4];
+    Bee bees[4];
 
 } Map;
 
@@ -104,6 +119,9 @@ typedef struct
 extern Map maps[3];
 extern Highscore highscores[NR_OF_HIGHSCORES];
 extern char player_name[3];
+extern int player_lives;
+extern int lights;
+extern unsigned int seed;
 // Own
 uint8_t display[32][128];  // Human readable pixel position and activation
 uint8_t oled_display[512]; // Computer readable pixel position and activation
@@ -132,7 +150,7 @@ void display_update();
 void display_score(int score);
 void display_figure(int x, int y, int height, int width, const uint8_t pixels[height][width]);
 void clear_figure(int x, int y, int height, int width);
-void clear_enemies(Map *map);
+inline void clear_enemies(const Map *map);
 void menu();
 void highscore();
 void pause();
@@ -143,6 +161,8 @@ void enter_name();
 void spawn_player();
 void game_loop();
 void select_screen();
+void start_game();
+void game_over();
 
 int check_switches();
 int check_buttons();
@@ -151,6 +171,8 @@ int check_buttons();
 void controls_init();
 int getbtns();
 int getsw();
+void show_lives(int lives);
+void is_collision();
 
 void clear_text_buffer();
 
@@ -158,5 +180,7 @@ void clear_text_buffer();
 void int_to_str(int num, char *str);
 void concat_strings(const char *str1, const char *str2, char *result);
 void switch_names(const char *name1, const char *name2, char *result1, char *result2);
+void custom_seed_init();
+int custom_random(int min, int max);
 
 #endif
