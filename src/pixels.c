@@ -1,4 +1,6 @@
-
+/*
+This file is written 2023 by Erik Smit.
+*/
 #include <stdint.h>  /* Declarations of uint_32 and the like */
 #include <pic32mx.h> /* Declarations of system-specific addresses etc */
 #include "dog.h"

@@ -1,5 +1,5 @@
 /*
-This file is written 2023 by Erik Smit
+This file is written 2023 by Erik Smit.
 This file contains helper functions used in other functions.
 */
 

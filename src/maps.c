@@ -1,4 +1,5 @@
 /*
+This file is written 2023 by Erik Smit and Hugo Larsson Wilhelmsson.
 This file contains functions and variables for initiating and handling different maps/difficulties of the game.
 
 Include Statements:
@@ -16,9 +17,6 @@ Functions:
 - reset_map(Map *map, int size): Resets all the elements of a given map, including hydrants and bees, by setting initial spawn values.
 
 Note: Portions of the code are marked as "TAKEN FROM LAB," indicating code derived from a laboratory setting.
-
-Author: [Erik Smit, Hugo Larsson Wilhelmsson]
-Date: [2023-12-06]
 */
 
 #include <stdint.h>
@@ -31,8 +29,7 @@ Map maps[3] = {
     {
         .next_hydr = -1,
         .next_bee = -1,
-        .hydr_timer = 30,
-        .bee_timer = 50,
+        .spawn_timer = 50,
         .real_size = 2,
         .hydrants = {
             {128 - FH_WIDTH, GROUND_LEVEL - FH_HEIGHT, -2, 0},
@@ -41,18 +38,17 @@ Map maps[3] = {
             {0, 0, 0, 0}
         },
         .bees = {
-            {128 - BEE_WIDTH, 17, -1, -1, 0, 0},
-            {128 - BEE_WIDTH, 18, -1, -1, 0, 0},
-            {0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0}
+            {128 - BEE_S_WIDTH, 16, -1, -1, 0},
+            {128 - BEE_S_WIDTH, 12, -1, -1, 0},
+            {0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0}
         }
     },
     // Medium map
     {
         .next_hydr = -1,
         .next_bee = -1,
-        .hydr_timer = 20,
-        .bee_timer = 30,
+        .spawn_timer = 50,
         .real_size = 3,
         .hydrants = {
             {128 - FH_WIDTH, GROUND_LEVEL - FH_HEIGHT, -3, 0},
@@ -61,18 +57,17 @@ Map maps[3] = {
             {0, 0, 0, 0}
         },
         .bees = {
-            {128 - BEE_WIDTH, 10, -1, -1, 0, 0},
-            {128 - BEE_WIDTH, 10, -1, -1, 0, 0},
-            {128 - BEE_WIDTH, 10, -1, -1, 0, 0},
-            {0, 0, 0, 0, 0, 0}
+            {128 - BEE_WIDTH, 10, -1, -1, 0},
+            {128 - BEE_WIDTH, 10, -1, -1, 0},
+            {128 - BEE_WIDTH, 10, -1, -1, 0},
+            {0, 0, 0, 0, 0}
         }
     },
     // Hard map
     {
         .next_hydr = -1,
         .next_bee = -1,
-        .hydr_timer = 20,
-        .bee_timer = 25,
+        .spawn_timer = 50,
         .real_size = 4,
         .hydrants = {
             {128 - FH_WIDTH, GROUND_LEVEL - FH_HEIGHT, -3, 0},
@@ -81,10 +76,10 @@ Map maps[3] = {
             {128 - FH_WIDTH, GROUND_LEVEL - FH_HEIGHT, -3, 0}
         },
         .bees = {
-            {128 - BEE_WIDTH, 10, -1, -1, 0, 0},
-            {128 - BEE_WIDTH, 10, -1, -1, 0, 0},
-            {128 - BEE_WIDTH, 10, -1, -1, 0, 0},
-            {128 - BEE_WIDTH, 10, -1, -1, 0, 0}
+            {128 - BEE_WIDTH, 10, -1, -1, 0},
+            {128 - BEE_WIDTH, 10, -1, -1, 0},
+            {128 - BEE_WIDTH, 10, -1, -1, 0},
+            {128 - BEE_WIDTH, 10, -1, -1, 0}
         }
     }
 };
@@ -114,7 +109,6 @@ void reset_map(Map *map, int size)
         map->bees[i].y = 10;
         map->bees[i].vel_x = -1;
         map->bees[i].vel_y = -1;
-        map->bees[i].y_mov = 0;
         map->bees[i].is_active = 0;
         map->next_bee = -1;
     }

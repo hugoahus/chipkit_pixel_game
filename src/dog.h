@@ -1,4 +1,8 @@
-/* THIS IS THE HEADER FILE FOR THE ENTIRE PROJECT*/
+
+/*
+THIS IS THE HEADER FILE FOR THE ENTIRE PROJECT
+This file is written 2023 by Erik Smit and Hugo Larsson Wilhelmsson
+*/
 
 #ifndef DOG_H
 #define DOG_H
@@ -44,6 +48,8 @@
 /* Bee ALTERNATIVE  constants*/
 #define BEE_S_WIDTH 6
 #define BEE_S_HEIGHT 3
+#define BEE_MIN_Y 12
+#define BEE_MAX_Y 16
 
 /* Physics constants*/
 #define JUMP_FORCE -2 // The initial force of the jump
@@ -89,18 +95,15 @@ typedef struct
     int y;
     int vel_x;
     int vel_y;
-    int y_mov; // Restricts y-movement
-
     uint8_t is_active;
 } Bee;
 
 typedef struct
 {
-    int next_hydr;  // Index of next hydrant
-    int next_bee;   // Index of next bee
-    int hydr_timer; // Timer that decides when hydr spawn
-    int bee_timer;  // Timer for bee spawn
-    int real_size;  // How many objects there are actually in the array (rest are null, max 4 obj)
+    int next_hydr; // Index of next hydrant
+    int next_bee;  // Index of next bee
+    int spawn_timer;
+    int real_size; // How many objects there are actually in the array (rest are null, max 4 obj)
     Hydrant hydrants[4];
     Bee bees[4];
 

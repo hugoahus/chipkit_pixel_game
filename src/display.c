@@ -1,6 +1,6 @@
 /* mipslabfunc.c
-   This file written 2015 by F Lundevall
-   Some parts are original code written by Erik Smit
+   Parts of this file is written 2015 by F Lundevall
+   Some parts are original code written 2023 by Erik Smit
 
    For copyright and licensing, see file COPYING */
 
