@@ -11,8 +11,8 @@ The purpose of this project was to develop the T-Rex game that appears when tryi
 - Different difficulties (easy, medium, hard) with different speeds and number of enemies.
 
 
-### Optional features (if time allows)
-- We implement a high score system that tracks the top 3 scores with the players initials (up to 3 letters).
+### Additional features
+- A high score system that tracks the top 3 scores with the players initials (up to 3 letters).
 - The current score is shown during the gameplay.
 - A life system, where the player can die 3 times before game over.
 - A pause screen that shows the unique seed of the current map.
