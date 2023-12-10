@@ -1,4 +1,4 @@
-## How to Compile and Install on ChipKITt
+## How to Compile and Install on ChipKIT
 To be able to compile and run this code on the ChipKIT, you need to install the latest version of the MCB32 toolchain, which is a c-compiler and assembler for the Uno32 boards.
 
 Firstly the correct serial path needs to be located by running one of the following commands
