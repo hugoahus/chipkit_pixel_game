@@ -68,4 +68,5 @@ If the player has achieved a new highscore, they will be confronted to enter a n
 After toggling a switch the button presses to alter the character, move up or down in the ASCII-table, are:
 - BTN4: Up
 - BTN3: Down
+- BTN2: Enter/Confirm name
 
