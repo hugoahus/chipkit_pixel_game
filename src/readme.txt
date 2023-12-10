@@ -12,7 +12,6 @@ After finding the correct path run
 
 ## Controls
 From the menu screen the controls for switching screens are displayed. These are the controls for playing the game:
-- BTN 2: Reset game
 - BTN 3: Jump
 
 If the player has achieved a new highscore, they will be confronted to enter a name for the highscore list. The name must be 3 characters in length. To select which character to change in the name, the player needs to toggle the corresponding switch first. These are the switch combinations
