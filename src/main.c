@@ -3,7 +3,6 @@
 
    This file written 2015 by Axel Isaksson and F Lundevall
    Modified 2023 by Erik Smit
-   Some original code written 2023 by Erik Smit
 
    For copyright and licensing, see file COPYING */
 
